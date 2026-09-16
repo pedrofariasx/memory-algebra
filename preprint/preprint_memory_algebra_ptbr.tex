@@ -33,6 +33,13 @@
 
 \maketitle
 
+\vspace{-1.5em}
+\begin{center}
+\small
+Este trabalho est\'a licenciado sob uma licen\c{c}a \href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International} (CC~BY~4.0).
+\end{center}
+\vspace{0.5em}
+
 \begin{abstract}
 Proponho e valido um framework alg\'ebrico para composi\c{c}\~ao de mem\'oria em sistemas de intelig\^encia artificial que resolve o trade-off fundamental entre composicionalidade e preserva\c{c}\~ao de representa\c{c}\~oes. A \'algebra da mem\'oria $(V, G, T, P)$ estrutura mem\'orias como objetos tipados compostos por embeddings sem\^anticos ($V$), grafos relacionais ($G$), \´indices temporais ($T$) e pesos de utilidade ($P$), equipados com cinco opera\c{c}\~oes: composi\c{c}\~ao ($\oplus$), retra\c{c}\~ao ($\ominus$), transforma\c{c}\~ao ($\otimes$), recupera\c{c}\~ao ($\rho$) e poda ($\Pi_C$). Provo que a composi\c{c}\~ao via uni\~ao disjunta com quociente pelo fecho transitivo de uma rela\c{c}\~ao de similaridade produz associatividade \emph{exata}---propriedade verificada empiricamente em 50 seeds aleat\'orias, m\'ultiplas configura\c{c}\~oes de par\^ametros e entradas adversariais. Compara\c{c}\~ao estat\'istica contra baselines LSTM, soma vetorial e kNN demonstra estabilidade significativamente superior sob composi\c{c}\~ao sequencial ($p < 0{,}01$, teste de Wilcoxon), enquanto os experimentos da Fase~3 confirmam diferencia\c{c}\~ao estrutural de buffers simples com busca por similaridade em resolu\c{c}\~ao de conflitos temporais (100\% vs.\ 50\%), retra\c{c}\~ao de fatos (100\% vs.\ 33--43\%) e racioc\'inio relacional multi-hop (100\% vs.\ 87--93\%). O framework escala at\'e $N = 10^3$ mem\'orias com lat\^encia de recupera\c{c}\~ao inferior a 150\,ms, fornecendo uma base alg\'ebrica principled para mem\'oria persistente e composicional em agentes de IA.
 \end{abstract}

@@ -32,6 +32,13 @@
 
 \maketitle
 
+\vspace{-1.5em}
+\begin{center}
+\small
+This work is licensed under a \href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution 4.0 International License} (CC~BY~4.0).
+\end{center}
+\vspace{0.5em}
+
 \begin{abstract}
 I propose and validate an algebraic framework for memory composition in artificial intelligence systems that resolves the fundamental trade-off between compositionality and representation preservation. The memory algebra $(V, G, T, P)$ structures memories as typed objects comprising semantic embeddings ($V$), relational graphs ($G$), temporal indices ($T$), and utility weights ($P$), equipped with five operations: composition ($\oplus$), retraction ($\ominus$), transformation ($\otimes$), retrieval ($\rho$), and pruning ($\Pi_C$). I prove that composition via disjoint union with quotient by transitive closure of a similarity relation yields \emph{exact} associativity---a property verified empirically across 50 random seeds, multiple parameter configurations, and adversarial inputs. Under a sequential-composition stability protocol, the algebra is significantly more stable than an untrained LSTM ($p = 1.48 \times 10^{-7}$, one-sided Mann--Whitney $U$) and vector summation ($p = 1.03 \times 10^{-6}$), but it is not superior to a trained in-sample LSTM or to a kNN buffer on this metric alone. Phase~3 therefore evaluates structural capabilities: the algebra attains 100\% accuracy in temporal conflict resolution (kNN: 50\%), fact retraction (kNN: 33--43\%), and multi-hop relational reasoning (kNN: 87--93\%). The framework scales to $N = 10^3$ memories with retrieval latency under 150\,ms, providing a principled algebraic foundation for persistent, composable memory in AI agents.
 \end{abstract}
