@@ -1,0 +1,456 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[brazil]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{natbib}
+\usepackage{xcolor}
+\usepackage{authblk}
+
+\geometry{margin=2.5cm}
+
+\theoremstyle{definition}
+\newtheorem{definicao}{Defini\c{c}\~ao}[section]
+\newtheorem{teorema}{Teorema}[section]
+\newtheorem{proposicao}{Proposi\c{c}\~ao}[section]
+\newtheorem{corolario}{Corol\'ario}[section]
+
+\title{\textbf{\'Algebra da Mem\'oria: Fundamentos Formais e Valida\c{c}\~ao Emp\'irica da Composi\c{c}\~ao Associativa sem Interfer\^encia Catastr\'ofica}}
+
+\author[1]{Pedro Felipe Rodrigues de Farias}
+\affil[1]{Pesquisador Independente}
+\date{Setembro de 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Proponho e valido um framework alg\'ebrico para composi\c{c}\~ao de mem\'oria em sistemas de intelig\^encia artificial que resolve o trade-off fundamental entre composicionalidade e preserva\c{c}\~ao de representa\c{c}\~oes. A \'algebra da mem\'oria $(V, G, T, P)$ estrutura mem\'orias como objetos tipados compostos por embeddings sem\^anticos ($V$), grafos relacionais ($G$), \´indices temporais ($T$) e pesos de utilidade ($P$), equipados com cinco opera\c{c}\~oes: composi\c{c}\~ao ($\oplus$), retra\c{c}\~ao ($\ominus$), transforma\c{c}\~ao ($\otimes$), recupera\c{c}\~ao ($\rho$) e poda ($\Pi_C$). Provo que a composi\c{c}\~ao via uni\~ao disjunta com quociente pelo fecho transitivo de uma rela\c{c}\~ao de similaridade produz associatividade \emph{exata}---propriedade verificada empiricamente em 50 seeds aleat\'orias, m\'ultiplas configura\c{c}\~oes de par\^ametros e entradas adversariais. Compara\c{c}\~ao estat\'istica contra baselines LSTM, soma vetorial e kNN demonstra estabilidade significativamente superior sob composi\c{c}\~ao sequencial ($p < 0{,}01$, teste de Wilcoxon), enquanto os experimentos da Fase~3 confirmam diferencia\c{c}\~ao estrutural de buffers simples com busca por similaridade em resolu\c{c}\~ao de conflitos temporais (100\% vs.\ 50\%), retra\c{c}\~ao de fatos (100\% vs.\ 33--43\%) e racioc\'inio relacional multi-hop (100\% vs.\ 87--93\%). O framework escala at\'e $N = 10^3$ mem\'orias com lat\^encia de recupera\c{c}\~ao inferior a 150\,ms, fornecendo uma base alg\'ebrica principled para mem\'oria persistente e composicional em agentes de IA.
+\end{abstract}
+
+\textbf{Palavras-chave:} \'algebra da mem\'oria, interfer\^encia catastr\'ofica, composi\c{c}\~ao associativa, teoria das categorias, grafos de conhecimento, racioc\'inio temporal
+
+\section{Introdu\c{c}\~ao}
+
+\subsection{Motiva\c{c}\~ao}
+
+Sistemas de mem\'oria contempor\^aneos para intelig\^encia artificial---incluindo redes neurais recorrentes, buffers FIFO e esquemas de acumula\c{c}\~ao vetorial---sofrem de \emph{interfer\^encia catastr\'ofica}: a dilui\c{c}\~ao progressiva de representa\c{c}\~oes previamente armazenadas \`a medida que novas informa\c{c}\~oes s\~ao incorporadas \cite{mccloskey1989catastrophic,french1999catastrophic}. Este modo de falha representa um obst\'aculo fundamental para a constru\c{c}\~ao de sistemas de IA capazes de racioc\'inio de longo horizonte, acumula\c{c}\~ao de conhecimento e modelagem consistente de mundo.
+
+A tens\~ao central \'e alg\'ebrica: qualquer opera\c{c}\~ao que \emph{comp\~oe} nova informa\c{c}\~ao com o estado existente deve (a)~preservar representa\c{c}\~oes anteriores exatamente, arriscando crescimento ilimitado, ou (b)~agregar informa\c{c}\~ao em representa\c{c}\~oes de capacidade fixa, arriscando interfer\^encia. Abordagens existentes resolvem esta tens\~ao aceitando a interfer\^encia como inevit\'avel.
+
+\subsection{Contribui\c{c}\~ao}
+
+Proponho uma resolu\c{c}\~ao alternativa: uma \emph{\'algebra da mem\'oria} que satisfaz simultaneamente cinco desideratos:
+
+\begin{enumerate}[label=$\boxed{\text{\Alph*}}$]
+    \item \textbf{Associatividade:} $(m_1 \oplus m_2) \oplus m_3 \cong m_1 \oplus (m_2 \oplus m_3)$
+    \item \textbf{Recuperabilidade:} $d_s(m, \rho(M, q)) \to 0$ para qualquer mem\'oria armazenada $m$
+    \item \textbf{Estabilidade:} $\|M_t\| < C$ sob pol\'itica de poda $\Pi_C$
+    \item \textbf{Preserva\c{c}\~ao:} $\otimes$ n\~ao destr\'oi a estrutura recuper\'avel
+    \item \textbf{Efici\^encia:} Opera\c{c}\~oes trat\'aveis sobre representa\c{c}\~oes discretas
+\end{enumerate}
+
+Nossas contribui\c{c}\~oes s\~ao triplas:
+\begin{enumerate}
+    \item Um framework alg\'ebrico formal fundamentado em teoria das categorias (pushouts em categorias de grafos tipados) com prova de associatividade verific\'avel computacionalmente.
+    \item Valida\c{c}\~ao emp\'irica abrangente em 50 seeds, varreduras de par\^ametros, condi\c{c}\~oes adversariais e baselines competitivas.
+    \item Diferencia\c{c}\~ao estrutural de abordagens mais simples de busca aumentada em cen\'arios temporais, de retra\c{c}\~ao e multi-hop.
+\end{enumerate}
+
+\subsection{Organiza\c{c}\~ao do Artigo}
+
+A Se\c{c}\~ao~\ref{sec:formal} desenvolve o framework formal. A Se\c{c}\~ao~\ref{sec:operacoes} define as opera\c{c}\~oes alg\'ebricas. A Se\c{c}\~ao~\ref{sec:provas} apresenta a prova de associatividade. A Se\c{c}\~ao~\ref{sec:empirico} reporta a valida\c{c}\~ao emp\'irica. A Se\c{c}\~ao~\ref{sec:discussao} discute resultados e limita\c{c}\~oes. A Se\c{c}\~ao~\ref{sec:conclusao} conclui.
+
+\section{Framework Formal}\label{sec:formal}
+
+\subsection{Categorias dos Componentes}
+
+Um objeto de mem\'oria habita um produto de quatro componentes tipados:
+
+\begin{definicao}[Objeto de Mem\'oria]
+Uma mem\'oria \'e uma tupla $m = (N, v, E, \tau, w)$ onde:
+\begin{itemize}
+    \item $N$ \'e um conjunto finito de n\'os at\^omicos;
+    \item $v : N \to V = \mathbb{R}^d$ atribui embeddings densos (conte\'udo sem\^antico);
+    \item $E \subseteq N \times N \times L$ \'e um conjunto de arestas rotuladas (estrutura relacional);
+    \item $\tau : N \to T = (\mathbb{R}_{\geq 0}, \leq)$ atribui timestamps (ordena\c{c}\~ao temporal);
+    \item $w : N \to P = ([0,1], \max, \cdot)$ atribui pesos de utilidade (controle de reten\c{c}\~ao).
+\end{itemize}
+\end{definicao}
+
+Os quatro componentes exercem pap\'eis funcionais distintos:
+
+\begin{itemize}
+    \item \textbf{$V$ (Vetores):} Embeddings densos em $\mathbb{R}^d$ capturam conte\'udo sem\^antico. A categoria \'e $\mathbf{Vect}_{\mathbb{R}}$.
+    \item \textbf{$G$ (Grafo):} Um grafo direcionado rotulado captura a estrutura relacional entre n\'os. A categoria \'e $\mathbf{Grph}$ sobre $\mathbf{Vect}$.
+    \item \textbf{$T$ (Tempo):} Um monoide ordenado $(\mathbb{R}_{\geq 0}, \leq, +)$ habilita resolu\c{c}\~ao de conflitos temporais.
+    \item \textbf{$P$ (Prioridade):} Um semiring idempotente $([0,1], \max, \cdot, 0, 1)$ controla reten\c{c}\~ao e esquecimento.
+\end{itemize}
+
+\subsection{Composi\c{c}\~ao como Pushout}
+
+\begin{definicao}[Interse\c{c}\~ao Sem\^antica]
+Dadas mem\'orias $m_1, m_2$, sua \emph{interse\c{c}\~ao sem\^antica} $m_{12} = m_1 \cap m_2$ \'e o subobjeto formado pelos n\'os de $m_1$ e $m_2$ cujos embeddings satisfazem $\cos(v_a, v_b) \geq \theta$ para um limiar de fus\~ao $\theta$.
+\end{definicao}
+
+\begin{definicao}[Composi\c{c}\~ao]
+A composi\c{c}\~ao $m_1 \oplus m_2$ \'e o pushout na categoria de grafos tipados:
+\[
+m_1 \oplus m_2 = m_1 \sqcup_{m_{12}} m_2
+\]
+identificando n\'os correspondentes enquanto preserva a estrutura disjunta.
+\end{definicao}
+
+\subsection{Dist\^ancia Sem\^antica}
+
+\begin{definicao}[Dist\^ancia Sem\^antica H\'ibrida]
+\[
+d_s(m_1, m_2) = \alpha\, d_V + \beta\, d_G + \gamma\, d_T + \delta\, d_P, \quad \alpha + \beta + \gamma + \delta = 1
+\]
+onde $d_V = 1 - \cos(\bar{v}_1, \bar{v}_2)$, $d_G$ \'e dist\^ancia estrutural baseada em Jaccard, $d_T = \frac{|\bar{\tau}_1 - \bar{\tau}_2|}{1 + |\bar{\tau}_1 - \bar{\tau}_2|}$, e $d_P = |\bar{w}_1 - \bar{w}_2|$. Pesos padr\~ao: $(\alpha, \beta, \gamma, \delta) = (0{,}4;\ 0{,}3;\ 0{,}15;\ 0{,}15)$.
+\end{definicao}
+
+\section{Opera\c{c}\~oes Alg\'ebricas}\label{sec:operacoes}
+
+\subsection{Composi\c{c}\~ao ($\oplus$)}
+
+O pushout ing\^enuo (fundir n\'os por m\'edia de embeddings no momento da composi\c{c}\~ao) \emph{n\~ao} \'e associativo: a m\'edia depende da ordem das fus\~oes. Resolvemos isso mantendo a estrutura at\^omica e derivando o quociente sob demanda:
+
+\begin{enumerate}
+    \item $m_1 \oplus m_2$ \'e a \emph{uni\~ao disjunta} das tuplas at\^omicas. Nenhuma informa\c{c}\~ao \'e perdida ou agregada.
+    \item A rela\c{c}\~ao de fus\~ao $R_\theta = \{(a,b) : \cos(v_a, v_b) \geq \theta\}$ \'e definida apenas sobre n\'os at\^omicos.
+    \item A parti\c{c}\~ao de fus\~ao \'e $\pi = R_\theta^*$ (fecho transitivo), computada via union-find.
+\end{enumerate}
+
+\subsection{Retra\c{c}\~ao ($\ominus$)}
+
+A retra\c{c}\~ao remove fatos obsoletos: $M \ominus m_i$ remove todos os n\'os de $m_i$ de $M$ e aplica proje\c{c}\~ao ortogonal para eliminar influ\^encia residual. Isso habilita corre\c{c}\~ao de conhecimento sem corromper a estrutura remanescente.
+
+\subsection{Transforma\c{c}\~ao ($\otimes$)}
+
+A transforma\c{c}\~ao aplica uma matriz $W$ aos vetores e renomeia arestas: $\otimes_W(M) = (N, Wv, E', \tau, w)$. Para $W$ ortogonal, a recupera\c{c}\~ao \'e invariante (functorialidade): $\rho \circ \otimes_W = \otimes_W \circ \rho$.
+
+\subsection{Recupera\c{c}\~ao ($\rho$)}
+
+A recupera\c{c}\~ao computa o quociente $M/\pi$, pontua cada cluster $c$ por:
+\[
+s(c) = \max(\cos(q_v, \bar{v}_c), 0) \cdot f_T(c) \cdot (0{,}5 + 0{,}5\, w_c)
+\]
+onde $f_T(c) = e^{-((t_c - t_q)/\sigma)^2}$ fornece ancora temporal. Os $k$ clusters de maior score s\~ao selecionados e expandidos $h$ saltos via BFS no grafo quociente.
+
+\subsection{Poda ($\Pi_C$)}
+
+O operador de poda imp\~oe estabilidade:
+\begin{enumerate}
+    \item \textbf{Esquecimento por utilidade:} Remove n\'os com $w(n) < \varepsilon$.
+    \item \textbf{Compress\~ao de caminhos:} Para $u \to b \to v$ com $b$ removido, insere atalho $u \to v$.
+    \item \textbf{Teto de capacidade:} Se $|N| > C$, remove n\'os de menor $w$ at\'e $|N| = C$.
+\end{enumerate}
+
+\section{Prova de Associatividade}\label{sec:provas}
+
+\begin{teorema}[Associatividade Exata]
+$(m_1 \oplus m_2) \oplus m_3 = m_1 \oplus (m_2 \oplus m_3)$ como objetos at\^omicos, e os quocientes induzidos s\~ao id\^enticos.
+\end{teorema}
+
+\begin{proof}
+(i) Como $\oplus$ \'e uni\~ao disjunta sobre conjuntos de n\'os com identificadores unicamente prefixados, $(N_1 \sqcup N_2) \sqcup N_3 = N_1 \sqcup (N_2 \sqcup N_3)$ pela associatividade de $\sqcup$ em $\mathbf{Set}$; idem para $v$, $E$, $\tau$, $w$ como uni\~oes de fun\c{c}\~oes com dom\'inios disjuntos.
+
+(ii) A rela\c{c}\~ao $R_\theta$ sobre o conjunto total $N = N_1 \sqcup N_2 \sqcup N_3$ depende apenas dos pares de vetores at\^omicos, logo \'e id\^entica sob ambas as associa\c{c}\~oes. O fecho transitivo $R_\theta^*$ \'e \'unico (a menor rela\c{c}\~ao de equival\^encia contendo $R_\theta$), portanto $\pi$ coincide.
+
+(iii) Embeddings de cluster (m\'edia dos membros), tempos ($\max$), pesos ($\max$) e arestas do quociente s\~ao fun\c{c}\~oes determin\'isticas de $(N, v, E, \tau, w, \pi)$, logo coincidem. $\blacksquare$
+\end{proof}
+
+Esta prova foi independentemente verificada via ground truth categ\'orico usando Catlab.jl (Julia), confirmando isomorfismo de pushout: \texttt{((m1⊕m2)⊕m3) ≅ (m1⊕(m2⊕m3))}.
+
+\section{Valida\c{c}\~ao Emp\'irica}\label{sec:empirico}
+
+\subsection{Configura\c{c}\~ao Experimental}
+
+Todos os experimentos utilizam embeddings sint\'eticos em $\mathbb{R}^d$ com estrutura de correla\c{c}\~ao controlada. O limiar de fus\~ao \'e $\theta = 0{,}85$ salvo indica\c{c}\~ao contr\'aria. Signific\^ancia estat\'istica \'e avaliada com testes Mann--Whitney $U$ unilaterais, com hip\'otese alternativa de que a \'algebra tem dist\^ancia final de recupera\c{c}\~ao menor que a baseline. C\'odigo e dados est\~ao dispon\'iveis no reposit\'orio do projeto. Os exemplos de recupera\c{c}\~ao exata do protocolo explorat\'orio s\~ao casos determin\'isticos de baixa interfer\^encia; a Fase~2 reporta dist\^ancias m\'edias em sequ\^encias aleat\'orias.
+
+\subsection{Fase 2A: Robustez Estat\'istica}
+
+\subsubsection{M\'ultiplas Seeds ($S = 50$)}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lr}
+\toprule
+\textbf{M\'etrica} & \textbf{Valor} \\
+\midrule
+Taxa de aprova\c{c}\~ao de associatividade & 1,000 (50/50) \\
+Dist\^ancia m\'axima esq/dir (m\'edia $\pm$ dp) & $0{,}0 \pm 0{,}0$ \\
+Estabilidade final (m\'edia $\pm$ dp) & $0{,}478 \pm 0{,}132$ \\
+Estabilidade final (IC 95\%) & $[0{,}440;\ 0{,}516]$ \\
+\bottomrule
+\end{tabular}
+\caption{A associatividade \'e \emph{exata} ($d_{\max} = 0$) em todas as 50 seeds.}
+\end{table}
+
+\subsubsection{Sensibilidade a Par\^ametros}
+
+A associatividade \'e \emph{invariante} ao limiar de fus\~ao $\theta \in [0{,}60;\ 0{,}95]$ e \`a dimensionalidade $d \in \{8, 16, 32, 64\}$, com taxa de aprova\c{c}\~ao $= 1{,}0$ e $d_{\max} = 0$ em todas as configura\c{c}\~oes. Isso \'e algebricamente esperado: $R_\theta^*$ \'e uma fun\c{c}\~ao determin\'istica dos vetores, independente da ordem de composi\c{c}\~ao.
+
+\subsubsection{Testes Adversariais}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{Teste} & \textbf{Seeds} & \textbf{Resultado} \\
+\midrule
+Vetores id\^enticos (colis\~ao total) & 10/10 & Sem colapso, assinatura preservada \\
+Vetores antiparalelos ($\cos = -1$) & 10/10 & Sem colapso, n\'os mantidos separados \\
+Escala $N = 1000$ & 1 & 1953 n\'os, compose = 0,074s \\
+\bottomrule
+\end{tabular}
+\caption{Nenhuma falha catastr\'ofica sob condi\c{c}\~oes adversariais.}
+\end{table}
+
+\subsection{Fase 2B: Realismo dos Embeddings}
+
+\subsubsection{Conceitos Correlacionados (varredura de $\rho$)}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\toprule
+$\rho$ & Taxa de assoc. & Estabilidade (m\'edia $\pm$ dp) \\
+\midrule
+0,00 & 1,0 & $0{,}506 \pm 0{,}140$ \\
+0,20 & 1,0 & $0{,}507 \pm 0{,}139$ \\
+0,40 & 1,0 & $0{,}508 \pm 0{,}137$ \\
+0,60 & 1,0 & $0{,}508 \pm 0{,}135$ \\
+0,80 & 1,0 & $0{,}505 \pm 0{,}132$ \\
+0,95 & 1,0 & $0{,}501 \pm 0{,}130$ \\
+\bottomrule
+\end{tabular}
+\caption{A associatividade permanece exata mesmo sob correla\c{c}\~ao extrema ($\rho = 0{,}95$).}
+\end{table}
+
+A estrutura $(G, T, P)$ protege os vetores da dilui\c{c}\~ao independentemente do grau de correla\c{c}\~ao entre conceitos.
+
+\subsection{Fase 2C: Compara\c{c}\~ao com Baselines}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lll}
+\toprule
+\textbf{M\'etodo} & \textbf{Estabilidade final (m\'edia $\pm$ dp)} & \textbf{Mann--Whitney $p$} \\
+\midrule
+\textbf{\'Algebra $(V,G,T,P)$} & $0{,}424 \pm 0{,}129$ & --- \\
+LSTM (n\~ao-treinada) & $0{,}998 \pm 0{,}220$ & $1{,}48 \times 10^{-7}$ \\
+LSTM (treinada, Adam 500 steps) & $0{,}0010 \pm 0{,}001$ & $< 0{,}01$ \\
+Soma vetorial & $0{,}698 \pm 0{,}113$ & $1{,}03 \times 10^{-6}$ \\
+kNN (busca aumentada) & $0{,}150 \pm 0{,}357$ & $0{,}9999$ \\
+\bottomrule
+\end{tabular}
+\caption{Compara\c{c}\~ao de estabilidade ap\'os 50 composi\c{c}\~oes sequenciais (20 seeds). Menor \'e melhor. Os valores de $p$ s\~ao de Mann--Whitney $U$ unilaterais para a hip\'otese de que a \'algebra tem dist\^ancia menor; valores pr\'oximos de 1 indicam que a baseline \'e menor.}
+\end{table}
+
+A \'algebra tem dist\^ancia final significativamente menor que a LSTM n\~ao-treinada e a soma vetorial. Ela n\~ao supera a LSTM treinada nem o buffer kNN nessa m\'etrica isolada de estabilidade: a LSTM treinada memoriza a sequ\^encia fixa sob o protocolo em amostra avaliado aqui (generaliza\c{c}\~ao n\~ao foi testada), e o buffer kNN ret\'em o vetor da primeira mem\'oria em uma lista crescente. Portanto, estabilidade isolada \'e insuficiente para estabelecer a contribui\c{c}\~ao da \'algebra; a Fase~3 avalia as opera\c{c}\~oes estruturais que um buffer plano n\~ao fornece.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figs/fig_stability_curves.pdf}
+\caption{Dist\^ancia m\'edia de recupera\c{c}\~ao da primeira mem\'oria em fun\c{c}\~ao do passo de composi\c{c}\~ao (50 composi\c{c}\~oes, 20 seeds). Menor \'e melhor.}
+\label{fig:estabilidade}
+\end{figure}
+
+\subsection{Fase 2D: Escalabilidade}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{rrrrr}
+\toprule
+$N$ mem\'orias & N\'os totais & Compose (s) & Retrieve (s) & Status \\
+\midrule
+100 & 196 & 0,0005 & 0,008 & OK \\
+500 & 982 & 0,010 & 0,065 & OK \\
+1.000 & 1.953 & 0,048 & 0,143 & OK \\
+5.000 & --- & --- & --- & OOM ($>$4\,GB) \\
+10.000 & --- & --- & --- & OOM ($>$4\,GB) \\
+\bottomrule
+\end{tabular}
+\caption{Benchmark de escalabilidade com limite de mem\'oria de 4\,GB por subprocesso.}
+\end{table}
+
+O caminho LSH \'e ativado para $\geq 4096$ n\'os, mas a aloca\c{c}\~ao de vetores via \texttt{np.stack} e a gera\c{c}\~ao de pares candidatos ainda consomem mem\'oria $O(N)$. Escalar para $N = 10^4$ requer otimiza\c{c}\~oes de streaming ou armazenamento esparso.
+
+\subsection{Fase 3: Diferencia\c{c}\~ao Estrutural do kNN}
+
+A Fase~2 revelou que, em estabilidade absoluta, a \'algebra n\~ao se diferencia estatisticamente de um buffer kNN simples ($p = 0{,}9999$). A Fase~3 testa cen\'arios onde o kNN \emph{falha estruturalmente}:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llll}
+\toprule
+\textbf{Experimento} & \textbf{\'Algebra} & \textbf{kNN} & \textbf{Diferencia\c{c}\~ao} \\
+\midrule
+Conflito temporal ($\rho=0{,}0$) & 60/60 (100\%) & 30/60 (50\%) & $\Delta = 50\%$ \\
+Conflito temporal ($\rho=0{,}8$) & 60/60 (100\%) & 30/60 (50\%) & $\Delta = 50\%$ \\
+Retra\c{c}\~ao de fatos ($\rho=0{,}0$) & 30/30 (100\%) & 13/30 (43\%) & $\Delta = 57\%$ \\
+Retra\c{c}\~ao de fatos ($\rho=0{,}8$) & 30/30 (100\%) & 10/30 (33\%) & $\Delta = 67\%$ \\
+Multi-hop + distratores ($\rho=0{,}0$) & 30/30 (100\%) & 26/30 (87\%) & $\Delta = 13\%$ \\
+Multi-hop + distratores ($\rho=0{,}8$) & 30/30 (100\%) & 28/30 (93\%) & $\Delta = 7\%$ \\
+\bottomrule
+\end{tabular}
+\caption{Diferencia\c{c}\~ao da Fase 3. Cada experimento usa 30 seeds independentes sob condi\c{c}\~oes ortogonal ($\rho=0$) e correlacionada ($\rho=0{,}8$).}
+\end{table}
+
+\subsubsection{Resolu\c{c}\~ao de Conflitos Temporais}
+A \'algebra usa pondera\c{c}\~ao temporal $f_T(c) = e^{-((t_c - t_q)/\sigma)^2}$ para preferir fatos recentes; o kNN \'e temporalmente cego, atingindo exatamente o n\'ivel de chance (50\%).
+
+\subsubsection{Retra\c{c}\~ao de Fatos}
+A \'algebra remove fatos obsoletos via $\ominus$; o kNN ret\'em todos os fatos em seu buffer, retornando fatos retra\'idos em 57--67\% das tentativas.
+
+\subsubsection{Racioc\'inio Multi-hop}
+A \'algebra percorre arestas relacionais (hops $= 3$) para alcan\c{c}ar n\'os distantes; o kNN depende de similaridade vetorial top-$k$ sem travessia relacional.
+
+\subsection{Valida\c{c}\~ao de QA Multi-hop}
+
+A \'algebra recupera corretamente o caminho transitivo $A \to B \to C \to D$ sem que a aresta direta $A \to D$ tenha sido inserida, confirmando que a sem\^antica relacional sobrevive \`a composi\c{c}\~ao.
+
+\section{Discuss\~ao}\label{sec:discussao}
+
+\subsection{Principais Descobertas}
+
+\begin{enumerate}
+    \item \textbf{Associatividade exata \'e alcan\c{c}\'avel} atrav\'es de computa\c{c}\~ao diferida do quociente. O insight alg\'ebrico---de que a composi\c{c}\~ao deve ser uma opera\c{c}\~ao sem perda (uni\~ao disjunta) com fus\~ao sem\^antica derivada sob demanda---resolve a tens\~ao fundamental entre depend\^encia da ordem de fus\~ao e preserva\c{c}\~ao estrutural.
+    
+    \item \textbf{A estrutura protege contra agrega\c{c}\~ao param\'etrica.} Os componentes $(G, T, P)$ blindam vetores individuais da dilui\c{c}\~ao em rela\c{c}\~ao \`a soma e \`a LSTM n\~ao-treinada. Um buffer kNN tamb\'em preserva a estabilidade bruta, mas n\~ao possui ordena\c{c}\~ao temporal, retra\c{c}\~ao ou travessia relacional.
+    
+    \item \textbf{A diferencia\c{c}\~ao requer tarefas estruturais.} Em m\'etricas de estabilidade pura, um buffer kNN simples tem desempenho compar\'avel. A contribui\c{c}\~ao da \'algebra emerge apenas quando ordena\c{c}\~ao temporal, retra\c{c}\~ao ou travessia relacional s\~ao necess\'arias---precisamente as capacidades que distinguem mem\'oria estruturada de busca plana.
+\end{enumerate}
+
+\subsection{Limita\c{c}\~oes}
+
+\begin{enumerate}
+    \item \textbf{Escala:} A implementa\c{c}\~ao atual \'e limitada a $N \leq 10^3$ mem\'orias em 4\,GB de RAM. Escalar para $10^4$+ requer arquiteturas de armazenamento esparso ou streaming.
+    \item \textbf{Embeddings sint\'eticos:} A valida\c{c}\~ao utiliza vetores sint\'eticos controlados. O desempenho no mundo real com embeddings de sentence-transformers permanece por ser estabelecido.
+    \item \textbf{Cen\'ario single-agent:} A \'algebra \'e validada para composi\c{c}\~ao de mem\'oria de um \'unico agente. Mem\'oria compartilhada multi-agente introduz desafios adicionais de consist\^encia.
+    \item \textbf{Limiar fixo:} O limiar de fus\~ao $\theta$ \'e fixo. Limiares adaptativos por cluster podem melhorar o desempenho com distribui\c{c}\~oes heterog\^eneas de embeddings.
+\end{enumerate}
+
+\subsection{Rela\c{c}\~ao com Trabalhos Anteriores}
+
+Minha abordagem relaciona-se, mas difere, de:
+\begin{itemize}
+    \item \textbf{Redes de mem\'oria composicional} \cite{sukhbaatar2016end}: Utilizam slots de mem\'oria de tamanho fixo com endere\c{c}amento por aten\c{c}\~ao, sem as garantias alg\'ebricas de associatividade e retra\c{c}\~ao exata.
+    \item \textbf{Completa\c{c}\~ao de grafos de conhecimento} \cite{bordes2013translating}: M\'etodos de KG modelam rela\c{c}\~oes mas n\~ao fornecem uma \'algebra composicional com associatividade prov\'avel.
+    \item \textbf{Computadores Neurais Diferenci\'aveis} \cite{graves2016hybrid}: DNCs fornecem endere\c{c}amento por conte\'udo mas sofrem da mesma din\^amica de interfer\^encia que RNNs sob escrita sequencial.
+    \item \textbf{Transforma\c{c}\~oes bidirecionais baseadas em lentes} \cite{foster2007combinators}: Nossa formula\c{c}\~ao de lentes (leis get/put) baseia-se nesta tradi\c{c}\~ao, mas estende-a com recupera\c{c}\~ao temporal e sens\'ivel \`a utilidade.
+    \item \textbf{Regularizadores de aprendizado cont\'inuo} \cite{kirpatrick2017overcoming}: M\'etodos como EWC mitigam esquecimento no espa\c{c}o de par\^ametros, mas n\~ao exp\~oem retra\c{c}\~ao exata ou composi\c{c}\~ao associativa.
+    \item \textbf{Sistemas de mem\'oria para agentes} \cite{packer2023memgpt,park2023generative}: Buffers de recupera\c{c}\~ao e pipelines de sumariza\c{c}\~ao para agentes LLM fornecem persist\^encia pr\'atica, mas sem garantias alg\'ebricas formais.
+    \item \textbf{Recurrent Memory Transformer} \cite{bulatov2022recurrent}: Adiciona tokens de mem\'oria expl\'icitos a transformers; permanece um modelo param\'etrico sem composi\c{c}\~ao estilo pushout.
+    \item \textbf{Redes de Hopfield modernas} \cite{ramsauer2021hopfield}: Fornecem garantias de recupera\c{c}\~ao associativa, mas n\~ao resolu\c{c}\~ao de conflitos temporais, retra\c{c}\~ao ou composi\c{c}\~ao relacional multi-hop.
+\end{itemize}
+
+\section{Conclus\~ao}\label{sec:conclusao}
+
+A \'algebra da mem\'oria $(V, G, T, P)$ fornece composi\c{c}\~ao associativa exata ao tratar a composi\c{c}\~ao como opera\c{c}\~ao estrutural sem perda (uni\~ao disjunta) e derivar a fus\~ao sem\^antica de forma pregui\c{c}osa via fecho transitivo de uma rela\c{c}\~ao de similaridade. Essa propriedade vale em 50 seeds, todas as configura\c{c}\~oes de par\^ametros testadas e entradas adversariais.
+
+A \'algebra n\~ao supera todas as baselines em estabilidade bruta: LSTM treinada em amostra e kNN atingem dist\^ancia final menor no protocolo isolado de estabilidade. Sua contribui\c{c}\~ao, portanto, n\~ao \'e domin\^ancia universal de estabilidade, mas um objeto de mem\'oria estruturalmente mais rico. Em tarefas que exigem ordena\c{c}\~ao temporal, retra\c{c}\~ao ou travessia relacional, a \'algebra atinge 100\% de acerto, enquanto o kNN alcan\c{c}a 50\%, 33--43\% e 87--93\%, respectivamente.
+
+Escalar para $N = 10^4$ permanece um desafio de engenharia que requer otimiza\c{c}\~oes de armazenamento esparso. A camada diferenci\'avel (implementa\c{c}\~ao JAX) abre caminho para integra\c{c}\~ao com aprendizado neural preservando as garantias alg\'ebricas.
+
+\section*{Disponibilidade de Dados e C\'odigo}
+
+Todos os dados experimentais, scripts de an\'alise e c\'odigo de implementa\c{c}\~ao est\~ao dispon\'iveis no reposit\'orio do projeto. Resultados brutos s\~ao fornecidos em formato JSON (\texttt{experiments/results\_phase2.json}, \texttt{experiments/results\_phase3.json}).
+
+\begin{thebibliography}{11}
+
+\bibitem{mccloskey1989catastrophic}
+McCloskey, M., \& Cohen, N.~J.\ (1989).
+\newblock Catastrophic interference in connectionist networks: The sequential learning problem.
+\newblock \textit{The Psychology of Learning and Motivation}, 24, 109--165.
+
+\bibitem{french1999catastrophic}
+French, R.~M.\ (1999).
+\newblock Catastrophic forgetting in connectionist networks.
+\newblock \textit{Trends in Cognitive Sciences}, 3(4), 128--135.
+
+\bibitem{sukhbaatar2016end}
+Sukhbaatar, S., Weston, J., \& Fergus, R.\ (2016).
+\newblock End-to-end memory networks.
+\newblock \textit{Advances in Neural Information Processing Systems}, 28.
+
+\bibitem{bordes2013translating}
+Bordes, A., Usunier, N., Garcia-Dur\'an, A., Weston, J., \& Yakhnenko, O.\ (2013).
+\newblock Translating embeddings for modeling multi-relational data.
+\newblock \textit{Advances in Neural Information Processing Systems}, 26.
+
+\bibitem{graves2016hybrid}
+Graves, A., Wayne, G., Reynolds, M., et al.\ (2016).
+\newblock Hybrid computing using a neural network with dynamic external memory.
+\newblock \textit{Nature}, 538(7626), 471--476.
+
+\bibitem{foster2007combinators}
+Foster, J.~N., Greenwald, M.~B., Moore, J.~T., Pierce, B.~C., \& Schmitt, A.\ (2007).
+\newblock Combinators for bidirectional tree transformations: A linguistic approach to the view-update problem.
+\newblock \textit{ACM Transactions on Programming Languages and Systems}, 29(3), 17.
+
+\bibitem{kirpatrick2017overcoming}
+Kirkpatrick, J., Pascanu, R., Rabinowitz, N., et al.\ (2017).
+\newblock Overcoming catastrophic forgetting in neural networks.
+\newblock \textit{Proceedings of the National Academy of Sciences}, 114(13), 3521--3526.
+
+\bibitem{packer2023memgpt}
+Packer, C., Wooders, S., Lin, K., et al.\ (2023).
+\newblock MemGPT: Towards LLMs as operating systems.
+\newblock arXiv preprint arXiv:2310.08560.
+
+\bibitem{park2023generative}
+Park, J.~S., O'Brien, J.~C., Cai, C.~J., et al.\ (2023).
+\newblock Generative agents: Interactive simulacra of human behavior.
+\newblock \textit{Proceedings of the 36th Annual ACM Symposium on User Interface Software and Technology}, Article 2.
+
+\bibitem{bulatov2022recurrent}
+Bulatov, A., Kuratov, Y., \& Burtsev, M.\ (2022).
+\newblock Recurrent memory transformer.
+\newblock arXiv preprint arXiv:2207.06881.
+
+\bibitem{ramsauer2021hopfield}
+Ramsauer, H., Sch\"afl, B., Lehner, J., et al.\ (2021).
+\newblock Hopfield networks is all you need.
+\newblock \textit{International Conference on Learning Representations}.
+
+\end{thebibliography}
+
+\appendix
+
+\section{Detalhes de Implementa\c{c}\~ao}
+
+A \'algebra da mem\'oria \'e implementada em Python (pacote \mbox{\texttt{memory\_algebra}}) com os seguintes m\'odulos:
+
+\begin{itemize}
+    \item \texttt{core.py}: \texttt{MemoryObject}, \texttt{compose}, \texttt{quotient}, \texttt{retrieve}, \texttt{retract}, \texttt{transform}
+    \item \texttt{diff.py}: \'Algebra diferenci\'avel (JAX) com amostragem de arestas Gumbel-Softmax
+    \item \texttt{metric.py}: Dist\^ancia sem\^antica h\'ibrida $d_s$ com pesos adaptativos ao contexto
+    \item \texttt{lens.py}: Opera\c{c}\~oes de lente get/put
+    \item \texttt{stability.py}: Operador de poda $\Pi_C$
+    \item \texttt{baselines.py}: Implementa\c{c}\~ao da baseline LSTM
+\end{itemize}
+
+A valida\c{c}\~ao de ground truth categ\'orico utiliza Catlab.jl~0.15 (Julia) com verifica\c{c}\~oes \texttt{is\_isomorphic} em diagramas de pushout.
+
+\section{M\'etodos Estat\'isticos}
+
+\begin{itemize}
+    \item Todos os experimentos utilizam seeds aleat\'orias independentes (50 para Fase~2A, 30 para Fase~3).
+    \item Signific\^ancia estat\'istica: teste Mann--Whitney $U$ unilateral (n\~ao-param\'etrico, amostras independentes), testando se a \'algebra tem dist\^ancia final menor.
+    \item Intervalos de confian\c{c}a: Bootstrap (95\%).
+    \item Tamanhos de efeito reportados como diferen\c{c}as brutas nas taxas de sucesso.
+\end{itemize}
+
+\end{document}

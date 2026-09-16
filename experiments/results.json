@@ -1,0 +1,84 @@
+{
+  "3_1_associatividade": {
+    "n_memorias": 100,
+    "assinaturas_iguais": true,
+    "max_distancia_esquerda_direita": 4.4408920985006264e-17,
+    "max_distancia_esquerda_paralelo": 4.4408920985006264e-17,
+    "sucesso": true
+  },
+  "3_2_estabilidade": {
+    "n_composicoes": 50,
+    "algebra_final": 0.0,
+    "algebra_max": 0.0,
+    "soma_vetorial_final": 0.9293217927414785,
+    "lstm_final": 0.5879749406548469,
+    "fifo_final": 1.0,
+    "curva_algebra": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "curva_soma_vetorial": [
+      0.0,
+      0.61211,
+      0.723634,
+      0.779674,
+      0.853903,
+      0.876713,
+      0.889669,
+      0.900116,
+      0.909094,
+      0.921452
+    ],
+    "curva_lstm": [
+      0.987316,
+      0.513002,
+      1.003249,
+      1.3474,
+      0.504129,
+      0.966805,
+      1.304387,
+      0.490103,
+      0.93631,
+      1.32684
+    ],
+    "curva_fifo": [
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "sucesso": true
+  },
+  "3_3_conflitos": {
+    "entidades_fundidas": true,
+    "historico_preservado": true,
+    "consulta_atual_correta": true,
+    "consulta_passado_correta": true,
+    "sucesso": true
+  },
+  "3_4_expressividade": {
+    "caminho_transitivo_existe": true,
+    "aresta_direta_AD_existe": false,
+    "alvo_recuperado": true,
+    "sucesso": true
+  },
+  "leis_lentes": {
+    "distancia_put_get": 0.0,
+    "get_put_idempotente": true,
+    "sucesso": true
+  }
+}

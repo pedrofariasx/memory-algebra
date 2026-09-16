@@ -1,0 +1,62 @@
+{
+  "temporal_conflict": {
+    "rho_0.0": {
+      "rho": 0.0,
+      "n_seeds": 30,
+      "algebra_score": "60/60",
+      "knn_score": "30/60",
+      "algebra_pct": 1.0,
+      "knn_pct": 0.5,
+      "algebra_wins": true
+    },
+    "rho_0.8": {
+      "rho": 0.8,
+      "n_seeds": 30,
+      "algebra_score": "60/60",
+      "knn_score": "30/60",
+      "algebra_pct": 1.0,
+      "knn_pct": 0.5,
+      "algebra_wins": true
+    }
+  },
+  "retraction": {
+    "rho_0.0": {
+      "rho": 0.0,
+      "n_seeds": 30,
+      "algebra_correct": "30/30",
+      "knn_correct": "13/30",
+      "algebra_pct": 1.0,
+      "knn_pct": 0.4333,
+      "algebra_wins": true
+    },
+    "rho_0.8": {
+      "rho": 0.8,
+      "n_seeds": 30,
+      "algebra_correct": "30/30",
+      "knn_correct": "10/30",
+      "algebra_pct": 1.0,
+      "knn_pct": 0.3333,
+      "algebra_wins": true
+    }
+  },
+  "multi_hop_distractors": {
+    "rho_0.0": {
+      "rho": 0.0,
+      "n_seeds": 30,
+      "algebra_correct": "30/30",
+      "knn_correct": "26/30",
+      "algebra_pct": 1.0,
+      "knn_pct": 0.8667,
+      "algebra_wins": true
+    },
+    "rho_0.8": {
+      "rho": 0.8,
+      "n_seeds": 30,
+      "algebra_correct": "30/30",
+      "knn_correct": "28/30",
+      "algebra_pct": 1.0,
+      "knn_pct": 0.9333,
+      "algebra_wins": true
+    }
+  }
+}
