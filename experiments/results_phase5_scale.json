@@ -1,0 +1,50 @@
+{
+  "model": "stepfun/step-3.7-flash:free",
+  "theta": 0.6,
+  "scales": [
+    {
+      "n_facts": 50,
+      "n_nodes": 50,
+      "encode_time": 0.22,
+      "compose_time": 0.0,
+      "retrieval_accuracy": 0.8,
+      "retrieval_time": 0.01,
+      "temporal_accuracy": 0.6,
+      "temporal_conflicts_tested": 5,
+      "retraction_accuracy": 1.0
+    },
+    {
+      "n_facts": 100,
+      "n_nodes": 100,
+      "encode_time": 0.21,
+      "compose_time": 0.0,
+      "retrieval_accuracy": 0.8,
+      "retrieval_time": 0.01,
+      "temporal_accuracy": 1.0,
+      "temporal_conflicts_tested": 5,
+      "retraction_accuracy": 1.0
+    },
+    {
+      "n_facts": 200,
+      "n_nodes": 200,
+      "encode_time": 0.44,
+      "compose_time": 0.0,
+      "retrieval_accuracy": 0.9,
+      "retrieval_time": 0.02,
+      "temporal_accuracy": 1.0,
+      "temporal_conflicts_tested": 5,
+      "retraction_accuracy": 1.0
+    },
+    {
+      "n_facts": 500,
+      "n_nodes": 500,
+      "encode_time": 1.48,
+      "compose_time": 0.01,
+      "retrieval_accuracy": 1.0,
+      "retrieval_time": 0.46,
+      "temporal_accuracy": 1.0,
+      "temporal_conflicts_tested": 5,
+      "retraction_accuracy": 1.0
+    }
+  ]
+}

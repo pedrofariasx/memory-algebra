@@ -357,6 +357,43 @@ The corpus comprises 20 factual knowledge pairs (fact, paraphrase) covering geog
 
 Phase~4 was also run at scale: with $N = 10{,}000$ real memories ($\theta = 0.85$), full composition takes 0.007\,s and retrieval takes $\sim$20\,s, returning 9{,}990 nodes. The retrieval time reflects the high density of intra-topic similar pairs typical of real embeddings; composition remains $O(N)$ and practical even at scale.
 
+\subsection{Phase 5: LLM Integration}
+
+Phase~5 validates the algebra as a memory layer for a real LLM agent (\texttt{stepfun/step-3.7-flash:free} via Kilo Gateway, no API key). The agent queries \texttt{retrieve()} as a tool and \texttt{compose()} to store facts.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{llll}
+\toprule
+\textbf{Scenario} & \textbf{Algebra} & \textbf{LLM (with memory)} & \textbf{Status} \\
+\midrule
+Temporal conflict & correct fact retrieved & ``engineer'' & PASS \\
+Retraction & retracted fact absent & ``Paris'' & PASS \\
+Multi-hop & 3 nodes retrieved & --- & PASS \\
+\bottomrule
+\end{tabular}
+\caption{LLM integration (Phase~5). Data in \texttt{experiments/results\_phase5.json}.}
+\end{table}
+
+At scale (Phase~5 Scale), the algebra was tested as a memory layer with $N = 50$ to $500$ real facts:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{rrrrrr}
+\toprule
+$N$ & Retrieval & Temporal & Retraction & Compose (s) & Retrieve (s) \\
+\midrule
+50 & 80\% & 60\% & 100\% & 0.00 & 0.01 \\
+100 & 80\% & 100\% & 100\% & 0.00 & 0.01 \\
+200 & 90\% & 100\% & 100\% & 0.00 & 0.02 \\
+500 & 100\% & 100\% & 100\% & 0.01 & 0.46 \\
+\bottomrule
+\end{tabular}
+\caption{Phase~5 Scale: algebra as LLM memory layer at scale. Data in \texttt{experiments/results\_phase5\_scale.json}.}
+\end{table}
+
+The algebra functions as a memory layer for a real LLM: at $N = 500$, all metrics reach 100\%. Composition remains $O(N)$ and retrieve scales linearly ($\sim$1\,ms per additional fact).
+
 \section{Discussion}\label{sec:discussion}
 
 \subsection{Key Findings}

@@ -1,0 +1,22 @@
+{
+  "model": "stepfun/step-3.7-flash:free",
+  "base_url": "https://api.kilo.ai/api/gateway/v1",
+  "theta": 0.6,
+  "scenario_temporal": {
+    "algebra_retrieved_correct": true,
+    "algebra_filtered_old": false,
+    "llm_with_memory": "engineer",
+    "llm_without_memory": "",
+    "with_memory_correct": true
+  },
+  "scenario_retraction": {
+    "retracted_fact_absent": true,
+    "correct_fact_present": true,
+    "llm_answer": "Paris",
+    "llm_correct": true
+  },
+  "scenario_multihop": {
+    "n_nodes_retrieved": 3,
+    "hops": 1
+  }
+}
