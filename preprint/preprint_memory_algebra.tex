@@ -10,7 +10,6 @@
 \usepackage{geometry}
 \usepackage{enumitem}
 \usepackage{microtype}
-\usepackage{natbib}
 \usepackage{xcolor}
 \usepackage{authblk}
 
@@ -40,7 +39,7 @@ This work is licensed under a \href{https://creativecommons.org/licenses/by/4.0/
 \vspace{0.5em}
 
 \begin{abstract}
-I propose and validate an algebraic framework for memory composition in artificial intelligence systems that resolves the fundamental trade-off between compositionality and representation preservation. The memory algebra $(V, G, T, P)$ structures memories as typed objects comprising semantic embeddings ($V$), relational graphs ($G$), temporal indices ($T$), and utility weights ($P$), equipped with five operations: composition ($\oplus$), retraction ($\ominus$), transformation ($\otimes$), retrieval ($\rho$), and pruning ($\Pi_C$). I prove that composition via disjoint union with quotient by transitive closure of a similarity relation yields \emph{exact} associativity---a property verified empirically across 50 random seeds, multiple parameter configurations, and adversarial inputs. Under a sequential-composition stability protocol, the algebra is significantly more stable than an untrained LSTM ($p = 1.48 \times 10^{-7}$, one-sided Mann--Whitney $U$) and vector summation ($p = 1.03 \times 10^{-6}$), but it is not superior to a trained in-sample LSTM or to a kNN buffer on this metric alone. Phase~3 therefore evaluates structural capabilities: the algebra attains 100\% accuracy in temporal conflict resolution (kNN: 50\%), fact retraction (kNN: 33--43\%), and multi-hop relational reasoning (kNN: 87--93\%). The framework scales to $N = 10^3$ memories with retrieval latency under 150\,ms, providing a principled algebraic foundation for persistent, composable memory in AI agents.
+I propose and validate an algebraic framework for memory composition in artificial intelligence systems that resolves the fundamental trade-off between compositionality and representation preservation. The memory algebra $(V, G, T, P)$ structures memories as typed objects comprising semantic embeddings ($V$), relational graphs ($G$), temporal indices ($T$), and utility weights ($P$), equipped with five operations: composition ($\oplus$), retraction ($\ominus$), transformation ($\otimes$), retrieval ($\rho$), and pruning ($\Pi_C$). I prove that composition via disjoint union with quotient by transitive closure of a similarity relation yields \emph{exact} associativity---a property verified empirically across 50 random seeds, multiple parameter configurations, and adversarial inputs. Under a sequential-composition stability protocol, the algebra is significantly more stable than an untrained LSTM ($p = 1.48 \times 10^{-7}$, one-sided Mann--Whitney $U$) and vector summation ($p = 1.03 \times 10^{-6}$), but it is not superior to a trained in-sample LSTM or to a kNN buffer on this metric alone. Phase~3 therefore evaluates structural capabilities: the algebra attains 100\% accuracy in temporal conflict resolution (kNN: 50\%), fact retraction (kNN: 33--43\%), and multi-hop relational reasoning (kNN: 87--93\%). The framework scales to $N = 10^4$ memories with retrieval latency under 500\,ms, providing a principled algebraic foundation for persistent, composable memory in AI agents.
 \end{abstract}
 
 \textbf{Keywords:} memory algebra, catastrophic interference, associative composition, category theory, knowledge graphs, temporal reasoning
@@ -176,7 +175,7 @@ $(m_1 \oplus m_2) \oplus m_3 = m_1 \oplus (m_2 \oplus m_3)$ as atomic objects, a
 (iii) Cluster embeddings (mean of members), times ($\max$), weights ($\max$), and quotient edges are deterministic functions of $(N, v, E, \tau, w, \pi)$, hence coincide. $\blacksquare$
 \end{proof}
 
-This proof was independently verified via categorical ground truth using Catlab.jl (Julia), confirming pushout isomorphism: \texttt{((m1⊕m2)⊕m3) ≅ (m1⊕(m2⊕m3))}.
+This proof was independently verified via categorical ground truth using Catlab.jl (Julia), confirming pushout isomorphism: $((m_1 \oplus m_2) \oplus m_3) \cong (m_1 \oplus (m_2 \oplus m_3))$.
 
 \section{Empirical Validation}\label{sec:empirical}
 
@@ -281,17 +280,17 @@ The algebra has significantly lower final distance than the untrained LSTM and v
 \toprule
 $N$ memories & Total nodes & Compose (s) & Retrieve (s) & Status \\
 \midrule
-100 & 196 & 0.0005 & 0.008 & OK \\
-500 & 982 & 0.010 & 0.065 & OK \\
-1{,}000 & 1{,}953 & 0.048 & 0.143 & OK \\
-5{,}000 & --- & --- & --- & OOM ($>$4\,GB) \\
-10{,}000 & --- & --- & --- & OOM ($>$4\,GB) \\
+100 & 196 & 0.000 & 0.014 & OK \\
+500 & 982 & 0.000 & 0.064 & OK \\
+1{,}000 & 1{,}953 & 0.001 & 0.172 & OK \\
+5{,}000 & 9{,}973 & 0.008 & 0.290 & OK \\
+10{,}000 & 19{,}986 & 0.011 & 0.478 & OK \\
 \bottomrule
 \end{tabular}
 \caption{Scalability benchmark with 4\,GB subprocess memory limit.}
 \end{table}
 
-The LSH pathway activates for $\geq 4096$ nodes, but vector allocation via \texttt{np.stack} and candidate pair generation still consume $O(N)$ memory. Scaling to $N = 10^4$ requires streaming or sparse storage optimizations.
+Two optimizations enable scaling to $N = 10^4$ within 4\,GB: (i)~\emph{chained LSH} --- buckets with more than 64 elements generate only consecutive pairs $O(n)$ instead of $O(n^2)$ enumeration; (ii)~\texttt{compose\_all} --- batch composition $O(N)$ instead of sequential composition with full copy at each step. Retrieval at $N = 10^4$: 0.478\,s.
 
 \subsection{Phase 3: Structural Differentiation from kNN}
 
@@ -349,7 +348,7 @@ The algebra correctly recovers the transitive path $A \to B \to C \to D$ without
 \subsection{Limitations}
 
 \begin{enumerate}
-    \item \textbf{Scale:} Current implementation is limited to $N \leq 10^3$ memories within 4\,GB RAM. Scaling to $10^4$+ requires sparse storage or streaming architectures.
+    \item \textbf{Scale:} Chained LSH and batch composition enable $N = 10^4$ memories within 4\,GB RAM (retrieval 0.478\,s). Scaling beyond $10^4$ requires sparse storage or streaming architectures.
     \item \textbf{Synthetic embeddings:} Validation uses controlled synthetic vectors. Real-world performance with sentence-transformer embeddings remains to be established.
     \item \textbf{Single-agent setting:} The algebra is validated for single-agent memory composition. Multi-agent shared memory introduces additional consistency challenges.
     \item \textbf{Fixed threshold:} The fusion threshold $\theta$ is fixed. Adaptive per-cluster thresholds may improve performance with heterogeneous embedding distributions.
@@ -375,7 +374,7 @@ The memory algebra $(V, G, T, P)$ provides exact associative composition by trea
 
 The algebra does not outperform every baseline on raw stability: trained in-sample LSTM and kNN achieve lower final retrieval distance under our stability-only protocol. Its contribution is therefore not universal stability dominance, but a structurally richer memory object. In tasks that require temporal ordering, retraction, or relational traversal, the algebra attains 100\% accuracy while kNN reaches 50\%, 33--43\%, and 87--93\%, respectively.
 
-Scalability to $N = 10^4$ remains an engineering challenge requiring sparse storage optimizations. The differentiable layer (JAX implementation) opens a path toward integration with neural learning while preserving algebraic guarantees.
+Scalability to $N = 10^4$ memories within 4\,GB RAM is achieved via chained LSH and batch composition (retrieval 0.478\,s); scaling beyond $10^4$ requires sparse storage optimizations. The differentiable layer (JAX implementation) opens a path toward integration with neural learning while preserving algebraic guarantees.
 
 \section*{Data and Code Availability}
 

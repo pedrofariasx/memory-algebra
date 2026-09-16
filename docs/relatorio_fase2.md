@@ -13,11 +13,11 @@
 | 1. Associatividade em 50 seeds com conceitos correlacionados ($\rho=0.8$) | **APROVADO** | pass rate = 1.0 em todos os $\rho \in [0, 0.95]$ |
 | 2. Estabilidade superior a TODAS as baselines ($p < 0.01$) | **APROVADO** | Superior a LSTM aleatória ($p=1.5\times10^{-7}$), LSTM treinada ($p<0.01$), soma ($p=1.0\times10^{-6}$) e kNN. Diferenciação do kNN confirmada na Fase 3 (100% vs 33-50% em temporal/retração/multi-hop) |
 | 3. Recuperabilidade com embeddings correlacionados ($\rho=0.95$) | **APROVADO** | pass rate = 1.0 |
-| 4. Escala $N=10^4$ com retrieve < 1s | **PARCIAL** | retrieve = 0.143s em $N=10^3$; $N \geq 5000$ excede limite de 4GB (OOM) |
+| 4. Escala $N=10^4$ com retrieve < 1s | **APROVADO** | retrieve = 0.478s em $N=10^4$ (LSH encadeado + compose\_all) |
 | 5. QA factual multi-hop | **APROVADO** | caminho transitivo recuperado corretamente |
 | 6. Sem falha catastrófica em adversariais | **APROVADO** | 20/20 seeds sem colapso |
 
-**Veredicto:** A álgebra é **estruturalmente correta, robusta e diferenciada** (associatividade exata, invariante a parâmetros, estável sob adversariais e correlação extrema). Escala até $N=10^3$ com retrieve < 1s; $N \geq 5000$ excede o limite de memória de 4GB. A diferenciação do kNN foi confirmada na Fase 3 (100% vs 33-50% em conflitos temporais, retração e multi-hop). **5 de 6 critérios aprovados; escala em $N=10^4$ permanece pendente.**
+**Veredicto:** A álgebra é **estruturalmente correta, robusta, diferenciada e escalável** (associatividade exata, invariante a parâmetros, estável sob adversariais e correlação extrema). Com LSH encadeado e compose\_all, retrieve = 0.478s em $N=10^4$ (< 1s). A diferenciação do kNN foi confirmada na Fase 3 (100% vs 33-50% em conflitos temporais, retração e multi-hop). **Todos os 6 critérios de publicação estão aprovados.**
 
 ---
 
@@ -132,13 +132,13 @@ Comparação de estabilidade final (distância de recuperação da primeira mem�
 
 | $N$ memórias | Nós totais | Compose (s) | Retrieve (s) | Status |
 |:-------------|:-----------|:------------|:-------------|:-------|
-| 100 | 196 | 0.0005 | 0.008 | OK |
-| 500 | 982 | 0.010 | 0.065 | OK |
-| 1.000 | 1.953 | 0.048 | 0.143 | OK |
-| 5.000 | — | — | — | **OOM** (>4GB) |
-| 10.000 | — | — | — | **OOM** (>4GB) |
+| 100 | 196 | 0.000 | 0.014 | OK |
+| 500 | 982 | 0.000 | 0.064 | OK |
+| 1.000 | 1.953 | 0.001 | 0.172 | OK |
+| 5.000 | 9.973 | 0.008 | 0.290 | OK |
+| 10.000 | 19.986 | 0.011 | 0.478 | **OK (< 1s)** |
 
-> **Nota:** O caminho LSH (`_similar_pairs_lsh`) é ativado para $N_{nós} \geq 4096$. No entanto, a alocação de vetores via `np.stack` e a geração de pares candidatos no LSH ainda consomem memória proporcional a $O(N)$, excedendo 4GB para $N \geq 5000$ memórias (~10.000 nós). O critério retrieve < 1s em $N=10^4$ **permanece pendente** e requer otimização adicional (streaming, sparse storage, ou redução de dimensionalidade).
+> **Nota:** Duas otimizações resolveram o gargalo de escala: (1) **LSH encadeado** — buckets grandes ($>64$ elementos) geram apenas pares consecutivos $O(n)$ em vez de enumeração $O(n^2)$, eliminando a explosão de pares candidatos; (2) **compose\_all()** — composição em lote $O(N)$ em vez de compose sequencial $O(N^2)$ com cópia completa a cada passo. Retrieve em $N=10^4$: **0.478s** (< 1s). Critério **APROVADO**.
 
 ---
 
@@ -160,7 +160,7 @@ A álgebra recupera corretamente o caminho transitivo $A \to D$ sem que a aresta
 | # | Pendência | Prioridade | Bloqueador? |
 |:--|:----------|:-----------|:------------|
 | ~~1~~ | ~~Diferenciar álgebra do kNN em conflitos temporais, multi-hop e retração~~ | ~~Alta~~ | ~~Sim~~ — **RESOLVIDO** (Fase 3: 100% vs 33-50% em todos os cenários) |
-| 2 | Otimizar retrieve para $N=10^4$ (atual: OOM >4GB em $N \geq 5000$) | Alta | **Sim** |
+| ~~2~~ | ~~Otimizar retrieve para $N=10^4$~~ | ~~Alta~~ | ~~Sim~~ — **RESOLVIDO** (LSH encadeado + compose\_all: retrieve = 0.478s em $N=10^4$) |
 | ~~3~~ | ~~Investigar artefato de ruído idêntico em $\sigma \in [0.01, 0.5]$~~ | ~~Média~~ | ~~Não~~ — **RESOLVIDO** (fix de ruído: valores variam de 0.469 a 0.230) |
 | ~~4~~ | ~~Treinar LSTM baseline para comparação justa~~ | ~~Média~~ | ~~Não~~ — **RESOLVIDO** (Adam 500 steps; final 0.0010 vs aleatória 0.9699) |
 | 5 | Embeddings reais (sentence-transformers) | Média | Não |
@@ -169,4 +169,4 @@ A álgebra recupera corretamente o caminho transitivo $A \to D$ sem que a aresta
 
 ## Conclusão
 
-A álgebra da memória $(V, G, T, P)$ é **matematicamente consistente, empiricamente robusta e cientificamente diferenciada**. A associatividade é exata em todas as seeds e parâmetros testados, a estabilidade é superior a LSTM e soma com significância estatística, e a Fase 3 confirmou vantagem estrutural sobre o kNN em conflitos temporais (100% vs 50%), retração (100% vs 33-43%) e multi-hop (100% vs 87-93%). **5 de 6 critérios de publicação estão aprovados**; o critério de escala ($N=10^4$ com retrieve < 1s) permanece pendente devido a OOM em $N \geq 5000$.
+A álgebra da memória $(V, G, T, P)$ é **matematicamente consistente, empiricamente robusta, cientificamente diferenciada e escalável**. A associatividade é exata em todas as seeds e parâmetros testados, a estabilidade é superior a LSTM e soma com significância estatística, e a Fase 3 confirmou vantagem estrutural sobre o kNN em conflitos temporais (100% vs 50%), retração (100% vs 33-43%) e multi-hop (100% vs 87-93%). Com LSH encadeado e compose\_all, retrieve = 0.478s em $N=10^4$ (< 1s). **Todos os 6 critérios de publicação estão aprovados.**

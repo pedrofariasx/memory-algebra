@@ -3,7 +3,6 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage[brazil]{babel}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{hyperref}
 \usepackage{booktabs}
@@ -11,7 +10,7 @@
 \usepackage{geometry}
 \usepackage{enumitem}
 \usepackage{microtype}
-\usepackage{natbib}
+
 \usepackage{xcolor}
 \usepackage{authblk}
 
@@ -41,7 +40,7 @@ Este trabalho est\'a licenciado sob uma licen\c{c}a \href{https://creativecommon
 \vspace{0.5em}
 
 \begin{abstract}
-Proponho e valido um framework alg\'ebrico para composi\c{c}\~ao de mem\'oria em sistemas de intelig\^encia artificial que resolve o trade-off fundamental entre composicionalidade e preserva\c{c}\~ao de representa\c{c}\~oes. A \'algebra da mem\'oria $(V, G, T, P)$ estrutura mem\'orias como objetos tipados compostos por embeddings sem\^anticos ($V$), grafos relacionais ($G$), \´indices temporais ($T$) e pesos de utilidade ($P$), equipados com cinco opera\c{c}\~oes: composi\c{c}\~ao ($\oplus$), retra\c{c}\~ao ($\ominus$), transforma\c{c}\~ao ($\otimes$), recupera\c{c}\~ao ($\rho$) e poda ($\Pi_C$). Provo que a composi\c{c}\~ao via uni\~ao disjunta com quociente pelo fecho transitivo de uma rela\c{c}\~ao de similaridade produz associatividade \emph{exata}---propriedade verificada empiricamente em 50 seeds aleat\'orias, m\'ultiplas configura\c{c}\~oes de par\^ametros e entradas adversariais. Compara\c{c}\~ao estat\'istica contra baselines LSTM, soma vetorial e kNN demonstra estabilidade significativamente superior sob composi\c{c}\~ao sequencial ($p < 0{,}01$, teste de Wilcoxon), enquanto os experimentos da Fase~3 confirmam diferencia\c{c}\~ao estrutural de buffers simples com busca por similaridade em resolu\c{c}\~ao de conflitos temporais (100\% vs.\ 50\%), retra\c{c}\~ao de fatos (100\% vs.\ 33--43\%) e racioc\'inio relacional multi-hop (100\% vs.\ 87--93\%). O framework escala at\'e $N = 10^3$ mem\'orias com lat\^encia de recupera\c{c}\~ao inferior a 150\,ms, fornecendo uma base alg\'ebrica principled para mem\'oria persistente e composicional em agentes de IA.
+Proponho e valido um framework alg\'ebrico para composi\c{c}\~ao de mem\'oria em sistemas de intelig\^encia artificial que resolve o trade-off fundamental entre composicionalidade e preserva\c{c}\~ao de representa\c{c}\~oes. A \'algebra da mem\'oria $(V, G, T, P)$ estrutura mem\'orias como objetos tipados compostos por embeddings sem\^anticos ($V$), grafos relacionais ($G$), \'{\i}ndices temporais ($T$) e pesos de utilidade ($P$), equipados com cinco opera\c{c}\~oes: composi\c{c}\~ao ($\oplus$), retra\c{c}\~ao ($\ominus$), transforma\c{c}\~ao ($\otimes$), recupera\c{c}\~ao ($\rho$) e poda ($\Pi_C$). Provo que a composi\c{c}\~ao via uni\~ao disjunta com quociente pelo fecho transitivo de uma rela\c{c}\~ao de similaridade produz associatividade \emph{exata}---propriedade verificada empiricamente em 50 seeds aleat\'orias, m\'ultiplas configura\c{c}\~oes de par\^ametros e entradas adversariais. Compara\c{c}\~ao estat\'istica contra baselines LSTM, soma vetorial e kNN demonstra estabilidade significativamente superior sob composi\c{c}\~ao sequencial ($p < 0{,}01$, teste de Wilcoxon), enquanto os experimentos da Fase~3 confirmam diferencia\c{c}\~ao estrutural de buffers simples com busca por similaridade em resolu\c{c}\~ao de conflitos temporais (100\% vs.\ 50\%), retra\c{c}\~ao de fatos (100\% vs.\ 33--43\%) e racioc\'inio relacional multi-hop (100\% vs.\ 87--93\%). O framework escala at\'e $N = 10^4$ mem\'orias com lat\^encia de recupera\c{c}\~ao inferior a 500\,ms, fornecendo uma base alg\'ebrica principled para mem\'oria persistente e composicional em agentes de IA.
 \end{abstract}
 
 \textbf{Palavras-chave:} \'algebra da mem\'oria, interfer\^encia catastr\'ofica, composi\c{c}\~ao associativa, teoria das categorias, grafos de conhecimento, racioc\'inio temporal
@@ -177,7 +176,7 @@ $(m_1 \oplus m_2) \oplus m_3 = m_1 \oplus (m_2 \oplus m_3)$ como objetos at\^omi
 (iii) Embeddings de cluster (m\'edia dos membros), tempos ($\max$), pesos ($\max$) e arestas do quociente s\~ao fun\c{c}\~oes determin\'isticas de $(N, v, E, \tau, w, \pi)$, logo coincidem. $\blacksquare$
 \end{proof}
 
-Esta prova foi independentemente verificada via ground truth categ\'orico usando Catlab.jl (Julia), confirmando isomorfismo de pushout: \texttt{((m1⊕m2)⊕m3) ≅ (m1⊕(m2⊕m3))}.
+Esta prova foi independentemente verificada via ground truth categ\'orico usando Catlab.jl (Julia), confirmando isomorfismo de pushout: $((m_1 \oplus m_2) \oplus m_3) \cong (m_1 \oplus (m_2 \oplus m_3))$.
 
 \section{Valida\c{c}\~ao Emp\'irica}\label{sec:empirico}
 
@@ -282,17 +281,17 @@ A \'algebra tem dist\^ancia final significativamente menor que a LSTM n\~ao-trei
 \toprule
 $N$ mem\'orias & N\'os totais & Compose (s) & Retrieve (s) & Status \\
 \midrule
-100 & 196 & 0,0005 & 0,008 & OK \\
-500 & 982 & 0,010 & 0,065 & OK \\
-1.000 & 1.953 & 0,048 & 0,143 & OK \\
-5.000 & --- & --- & --- & OOM ($>$4\,GB) \\
-10.000 & --- & --- & --- & OOM ($>$4\,GB) \\
+100 & 196 & 0,000 & 0,014 & OK \\
+500 & 982 & 0,000 & 0,064 & OK \\
+1.000 & 1.953 & 0,001 & 0,172 & OK \\
+5.000 & 9.973 & 0,008 & 0,290 & OK \\
+10.000 & 19.986 & 0,011 & 0,478 & OK \\
 \bottomrule
 \end{tabular}
 \caption{Benchmark de escalabilidade com limite de mem\'oria de 4\,GB por subprocesso.}
 \end{table}
 
-O caminho LSH \'e ativado para $\geq 4096$ n\'os, mas a aloca\c{c}\~ao de vetores via \texttt{np.stack} e a gera\c{c}\~ao de pares candidatos ainda consomem mem\'oria $O(N)$. Escalar para $N = 10^4$ requer otimiza\c{c}\~oes de streaming ou armazenamento esparso.
+Duas otimiza\c{c}\~oes permitem escalar a $N = 10^4$ dentro do limite de 4\,GB: (i)~\emph{LSH encadeado} --- buckets com mais de 64 elementos geram apenas pares consecutivos $O(n)$ em vez de enumera\c{c}\~ao $O(n^2)$; (ii)~\texttt{compose\_all} --- composi\c{c}\~ao em lote $O(N)$ em vez de composi\c{c}\~ao sequencial com c\'opia integral a cada passo. Retrieve em $N = 10^4$: $0{,}478$\,s ($< 1$\,s).
 
 \subsection{Fase 3: Diferencia\c{c}\~ao Estrutural do kNN}
 
@@ -343,7 +342,7 @@ A \'algebra recupera corretamente o caminho transitivo $A \to B \to C \to D$ sem
 \subsection{Limita\c{c}\~oes}
 
 \begin{enumerate}
-    \item \textbf{Escala:} A implementa\c{c}\~ao atual \'e limitada a $N \leq 10^3$ mem\'orias em 4\,GB de RAM. Escalar para $10^4$+ requer arquiteturas de armazenamento esparso ou streaming.
+    \item \textbf{Escala:} LSH encadeado e composi\c{c}\~ao em lote permitem $N = 10^4$ mem\'orias em 4\,GB de RAM (retrieve 0,478\,s). Escalar al\'em de $10^4$ requer arquiteturas de armazenamento esparso ou streaming.
     \item \textbf{Embeddings sint\'eticos:} A valida\c{c}\~ao utiliza vetores sint\'eticos controlados. O desempenho no mundo real com embeddings de sentence-transformers permanece por ser estabelecido.
     \item \textbf{Cen\'ario single-agent:} A \'algebra \'e validada para composi\c{c}\~ao de mem\'oria de um \'unico agente. Mem\'oria compartilhada multi-agente introduz desafios adicionais de consist\^encia.
     \item \textbf{Limiar fixo:} O limiar de fus\~ao $\theta$ \'e fixo. Limiares adaptativos por cluster podem melhorar o desempenho com distribui\c{c}\~oes heterog\^eneas de embeddings.
@@ -369,7 +368,7 @@ A \'algebra da mem\'oria $(V, G, T, P)$ fornece composi\c{c}\~ao associativa exa
 
 A \'algebra n\~ao supera todas as baselines em estabilidade bruta: LSTM treinada em amostra e kNN atingem dist\^ancia final menor no protocolo isolado de estabilidade. Sua contribui\c{c}\~ao, portanto, n\~ao \'e domin\^ancia universal de estabilidade, mas um objeto de mem\'oria estruturalmente mais rico. Em tarefas que exigem ordena\c{c}\~ao temporal, retra\c{c}\~ao ou travessia relacional, a \'algebra atinge 100\% de acerto, enquanto o kNN alcan\c{c}a 50\%, 33--43\% e 87--93\%, respectivamente.
 
-Escalar para $N = 10^4$ permanece um desafio de engenharia que requer otimiza\c{c}\~oes de armazenamento esparso. A camada diferenci\'avel (implementa\c{c}\~ao JAX) abre caminho para integra\c{c}\~ao com aprendizado neural preservando as garantias alg\'ebricas.
+Escalabilidade para $N = 10^4$ mem\'orias em 4\,GB de RAM \'e alcan\c{c}ada via LSH encadeado e composi\c{c}\~ao em lote (retrieve 0,478\,s); escalar al\'em de $10^4$ requer otimiza\c{c}\~oes de armazenamento esparso. A camada diferenci\'avel (implementa\c{c}\~ao JAX) abre caminho para integra\c{c}\~ao com aprendizado neural preservando as garantias alg\'ebricas.
 
 \section*{Disponibilidade de Dados e C\'odigo}
 

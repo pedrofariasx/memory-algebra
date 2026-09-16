@@ -1,6 +1,15 @@
 [Versão em português](README.md)
 
-# memory-algebra — Formalization, Computation, and Validation of Memory Algebra
+# memory-algebra
+
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Tests](https://github.com/pedrofariasx/memory-algebra/actions/workflows/tests.yml/badge.svg)](https://github.com/pedrofariasx/memory-algebra/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-30%20passed-brightgreen)](tests/)
+[![Preprint](https://img.shields.io/badge/preprint-CC--BY--4.0-orange)](https://zenodo.org/records/22782385)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22782385.svg)](https://doi.org/10.5281/zenodo.22782385)
+
+A **memory algebra** for AI systems that solves **catastrophic interference** (catastrophic forgetting): successive memory compositions without destroying previous representations. Python implementation with formal proofs of exact associativity, empirical validation against baselines (LSTM, vector summation, kNN), and preprint available in PT-BR and EN.
 
 ## Central Hypothesis
 
@@ -175,3 +184,9 @@ julia formal/catlab_ground_truth.jl
 ## Conclusion
 
 The algebra $(V, G, T, P)$ resolves the central trade-off: **associative composition without representation destruction**. Results demonstrate that graph + time + utility structure protects individual vectors from dilution — a property no tested baseline (vector summation, LSTM, FIFO) can maintain. The differentiable layer opens a path toward integration with neural learning while preserving algebraic guarantees.
+
+---
+
+## Citation
+
+Farias, P. F. R. (2026). *An Algebra of Memory: Formal Foundations and Empirical Validation of Associative Composition Without Catastrophic Interference*. Zenodo. [https://doi.org/10.5281/zenodo.22782385](https://doi.org/10.5281/zenodo.22782385)

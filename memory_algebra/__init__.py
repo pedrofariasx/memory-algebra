@@ -5,6 +5,7 @@ from memory_algebra.core import (
     Quotient,
     Retrieval,
     compose,
+    compose_all,
     cosine,
     quotient,
     retract,

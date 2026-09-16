@@ -13,7 +13,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from memory_algebra import EMPTY, Query, compose, make_memory, orthogonal_concepts, retrieve
+from memory_algebra import EMPTY, Query, compose, compose_all, make_memory, orthogonal_concepts, retrieve
 
 DIM = 16
 THETA = 0.85
@@ -46,9 +46,7 @@ def _scale_worker(n, queue):
     concepts = orthogonal_concepts(DIM, DIM, rng)
     mems = gen_sequence(rng, concepts, n)
     t0 = time.time()
-    M = EMPTY
-    for m in mems:
-        M = compose(M, m)
+    M = compose_all(mems)
     t_compose = time.time() - t0
     query = Query(vector=concepts[0], top_k=1, hops=0)
     t0 = time.time()

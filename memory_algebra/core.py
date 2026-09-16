@@ -80,6 +80,29 @@ def compose(a: MemoryObject, b: MemoryObject) -> MemoryObject:
     )
 
 
+def compose_all(mems: Sequence[MemoryObject]) -> MemoryObject:
+    nodes: set[str] = set()
+    vectors: dict[str, np.ndarray] = {}
+    edges: set[Edge] = set()
+    times: dict[str, float] = {}
+    weights: dict[str, float] = {}
+    for m in mems:
+        if nodes & m.nodes:
+            raise ValueError("colisão de identificadores; prefixe as memórias antes de compor")
+        nodes |= m.nodes
+        vectors.update(m.vectors)
+        edges |= m.edges
+        times.update(m.times)
+        weights.update(m.weights)
+    return MemoryObject(
+        nodes=frozenset(nodes),
+        vectors=vectors,
+        edges=frozenset(edges),
+        times=times,
+        weights=weights,
+    )
+
+
 @dataclass(frozen=True)
 class Quotient:
     clusters: tuple[Cluster, ...]
@@ -119,13 +142,13 @@ def _similar_pairs_lsh(
     bands: int = 12,
     rows: int = 3,
     seed: int = 12345,
+    small_bucket: int = 64,
 ):
     n, d = unit.shape
     rng = np.random.default_rng(seed)
     planes = rng.standard_normal((bands * rows, d))
     signs = (unit @ planes.T) >= 0.0
-    candidate_i = []
-    candidate_j = []
+    seen: set[tuple[int, int]] = set()
     for b in range(bands):
         band = signs[:, b * rows : (b + 1) * rows]
         keys = np.packbits(band, axis=1)
@@ -140,18 +163,22 @@ def _similar_pairs_lsh(
             size = len(bucket)
             if size < 2:
                 continue
-            for i in range(size):
-                for j in range(i + 1, size):
-                    candidate_i.append(bucket[i])
-                    candidate_j.append(bucket[j])
-    if not candidate_i:
+            if size <= small_bucket:
+                for i in range(size):
+                    for j in range(i + 1, size):
+                        a, b_ = int(bucket[i]), int(bucket[j])
+                        if a > b_:
+                            a, b_ = b_, a
+                        seen.add((a, b_))
+            else:
+                for i in range(size - 1):
+                    a, b_ = int(bucket[i]), int(bucket[i + 1])
+                    if a > b_:
+                        a, b_ = b_, a
+                    seen.add((a, b_))
+    if not seen:
         return np.empty(0, dtype=np.intp), np.empty(0, dtype=np.intp)
-    ci = np.array(candidate_i, dtype=np.intp)
-    cj = np.array(candidate_j, dtype=np.intp)
-    keep = ci < cj
-    ci, cj = ci[keep], cj[keep]
-    ci, cj = np.minimum(ci, cj), np.maximum(ci, cj)
-    pairs = np.unique(np.stack([ci, cj], axis=1), axis=0)
+    pairs = np.array(sorted(seen), dtype=np.intp)
     ci, cj = pairs[:, 0], pairs[:, 1]
     sims = np.einsum("ij,ij->i", unit[ci], unit[cj])
     keep = sims >= theta

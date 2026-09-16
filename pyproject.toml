@@ -17,6 +17,9 @@ diff = [
     "jax>=0.4",
 ]
 
+[tool.setuptools]
+packages = ["memory_algebra"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
