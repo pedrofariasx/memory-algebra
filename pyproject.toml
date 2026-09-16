@@ -16,6 +16,9 @@ test = [
 diff = [
     "jax>=0.4",
 ]
+embeddings = [
+    "sentence-transformers>=2.2",
+]
 
 [tool.setuptools]
 packages = ["memory_algebra"]

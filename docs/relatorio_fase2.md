@@ -163,7 +163,7 @@ A álgebra recupera corretamente o caminho transitivo $A \to D$ sem que a aresta
 | ~~2~~ | ~~Otimizar retrieve para $N=10^4$~~ | ~~Alta~~ | ~~Sim~~ — **RESOLVIDO** (LSH encadeado + compose\_all: retrieve = 0.478s em $N=10^4$) |
 | ~~3~~ | ~~Investigar artefato de ruído idêntico em $\sigma \in [0.01, 0.5]$~~ | ~~Média~~ | ~~Não~~ — **RESOLVIDO** (fix de ruído: valores variam de 0.469 a 0.230) |
 | ~~4~~ | ~~Treinar LSTM baseline para comparação justa~~ | ~~Média~~ | ~~Não~~ — **RESOLVIDO** (Adam 500 steps; final 0.0010 vs aleatória 0.9699) |
-| 5 | Embeddings reais (sentence-transformers) | Média | Não |
+| ~~5~~ | ~~Embeddings reais (sentence-transformers)~~ | ~~Média~~ | ~~Não~~ — **RESOLVIDO** (Fase 4: all-MiniLM-L6-v2, assoc\_exact=True, top1\_retrieval=100% (20/20), stability=True) |
 
 ---
 

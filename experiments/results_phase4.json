@@ -1,0 +1,23 @@
+{
+  "model": "all-MiniLM-L6-v2",
+  "theta": 0.6,
+  "phase4a_associativity": {
+    "assoc_exact": true,
+    "order_invariant": true,
+    "n_nodes": 10
+  },
+  "phase4b_retrieval": {
+    "top1_accuracy": 1.0,
+    "hits": 20,
+    "total": 20,
+    "mean_score": 0.8953324693231357
+  },
+  "phase4c_stability": {
+    "first_memory_recovered": true,
+    "n_nodes": 20
+  },
+  "phase4d_multihop": {
+    "n_retrieved": 1,
+    "hops": 2
+  }
+}
