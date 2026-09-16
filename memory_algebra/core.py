@@ -142,7 +142,7 @@ def _similar_pairs_lsh(
     bands: int = 12,
     rows: int = 3,
     seed: int = 12345,
-    small_bucket: int = 64,
+    small_bucket: int = 1024,
 ):
     n, d = unit.shape
     rng = np.random.default_rng(seed)
@@ -180,9 +180,18 @@ def _similar_pairs_lsh(
         return np.empty(0, dtype=np.intp), np.empty(0, dtype=np.intp)
     pairs = np.array(sorted(seen), dtype=np.intp)
     ci, cj = pairs[:, 0], pairs[:, 1]
-    sims = np.einsum("ij,ij->i", unit[ci], unit[cj])
-    keep = sims >= theta
-    return ci[keep], cj[keep]
+    chunk = 200_000
+    keep_i = []
+    keep_j = []
+    for start in range(0, ci.size, chunk):
+        end = min(start + chunk, ci.size)
+        sims = np.einsum("ij,ij->i", unit[ci[start:end]], unit[cj[start:end]])
+        mask = sims >= theta
+        keep_i.append(ci[start:end][mask])
+        keep_j.append(cj[start:end][mask])
+    if not keep_i:
+        return np.empty(0, dtype=np.intp), np.empty(0, dtype=np.intp)
+    return np.concatenate(keep_i), np.concatenate(keep_j)
 
 
 def _similar_pairs(unit: np.ndarray, theta: float, block: int = 2048):
