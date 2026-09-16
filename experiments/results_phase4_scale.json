@@ -1,11 +1,11 @@
 {
   "model": "all-MiniLM-L6-v2",
-  "theta": 0.6,
+  "theta": 0.85,
   "n_memories": 10000,
   "n_nodes": 10000,
-  "encode_time": 45.9670352935791,
-  "compose_time": 0.010094881057739258,
-  "retrieve_time_first": 21.80539631843567,
-  "retrieve_time_mid": 21.747959852218628,
-  "nodes_retrieved": 10000
+  "encode_time": 44.380592823028564,
+  "compose_time": 0.006861686706542969,
+  "retrieve_time_first": 20.194201707839966,
+  "retrieve_time_mid": 20.563515663146973,
+  "nodes_retrieved": 9990
 }

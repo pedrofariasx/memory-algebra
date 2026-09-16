@@ -14,7 +14,7 @@ from memory_algebra import EMPTY, Query, compose_all, make_memory, retrieve
 from sentence_transformers import SentenceTransformer
 
 MODEL_NAME = "all-MiniLM-L6-v2"
-THETA = 0.85
+THETA = 0.60
 N = 10000
 
 

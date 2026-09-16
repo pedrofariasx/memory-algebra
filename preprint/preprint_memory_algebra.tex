@@ -354,6 +354,9 @@ Phases 2--3 validate the algebra with synthetic orthogonal embeddings. Phase~4 c
 
 The corpus comprises 20 factual knowledge pairs (fact, paraphrase) covering geography, science, and general knowledge. Paraphrases use distinct lexical formulations (e.g., ``The capital of France is Paris'' $\leftrightarrow$ ``Paris is the capital city of France''), exercising non-literal semantic retrieval.
 
+
+Phase~4 was also run at scale: with $N = 10{,}000$ real memories ($\theta = 0.85$), full composition takes 0.007\,s and retrieval takes $\sim$20\,s, returning 9{,}990 nodes. The retrieval time reflects the high density of intra-topic similar pairs typical of real embeddings; composition remains $O(N)$ and practical even at scale.
+
 \section{Discussion}\label{sec:discussion}
 
 \subsection{Key Findings}

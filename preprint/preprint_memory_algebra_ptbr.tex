@@ -348,6 +348,9 @@ Multi-hop com arestas relacionais & opera corretamente em hops $= 2$ & APROVADO 
 
 A associatividade \'e estrutural: preserva-se fora do regime ortogonal sint\'eticos. A recupera\c{c}\~ao por par\'afrase atinge 100\% top-1, demonstrando que a fus\~ao por similaridade opera corretamente sobre a distribui\c{c}\~ao real de embeddings, onde conceitos semanticamente pr\'oximos apresentam alta correla\c{c}\~ao.
 
+A Fase~4 tamb'em foi executada em escala: com $N = 10{,}000$ mem'orias reais ($\theta = 0{,}85$), a composi\c{c}\~ao completa leva 0,007\,s e a recupera\c{c}\~ao leva $\sim$20\,s, retornando 9.990 n'os. O tempo de recupera\c{c}\~ao reflete a alta densidade de pares similares intra-t'opico t'ipica de embeddings reais; a composi\c{c}\~ao permanece $O(N)$ e pr'atica mesmo em escala.
+
+
 \section{Discuss\~ao}\label{sec:discussao}
 
 \subsection{Principais Descobertas}
