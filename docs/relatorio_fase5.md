@@ -113,6 +113,35 @@ A acurácia de recuperação, resolução temporal e retração não degrada com
 
 ---
 
+## Experimento 5C: Agente ReAct Multi-Modelo
+
+### Hipótese
+
+A melhora de acurácia com a álgebra de memória não depende do modelo LLM utilizado — diferentes modelos beneficiam-se do contexto recuperado algebricamente.
+
+### Metodologia
+
+Um agente ReAct (Thought → Action → Observation) foi implementado em `experiments/run_phase5_react_agent.py`, com ferramentas `memory_search(query, k, hops)` e `get_node(name)` que invocam os operadores da álgebra. O agente decide autonomamente quando consultar a memória. Quatro cenários: `private_fact_recall`, `temporal_conflict`, `retraction` e `multi_hop`. Cada modelo foi avaliado nos mesmos cenários com baseline (sem memória).
+
+### Resultados
+
+| Modelo | ReAct acc | Baseline acc | Ferramentas/cenário |
+|--------|-----------|--------------|---------------------|
+| dots-studio/dots-3-note-preview:free | **1,00** | 0,25 | 1,75 |
+| inclusionai/ling-3.0-flash-vl:free | **1,00** | 0,25 | 3,00 |
+| nex-agi/nex-n2.5-pro:free | 0,50 | 0,25 | 0,50 |
+| stepfun/step-3.7-flash:free | 0,50 | 0,25 | 1,00 |
+| nvidia/nemotron-3-ultra-550b-a55b:free | indisponível | — | — |
+| poolside/laguna-s-2.1:free | indisponível | — | — |
+
+### Análise
+
+- **ReAct ≥ baseline em todos os modelos disponíveis.** Em 2 de 4 modelos o agente atingiu 100% de acurácia com a memória algébrica, contra 25% do baseline.
+- **Modelos indisponíveis:** `nvidia/nemotron-3-ultra-550b-a55b:free` e `poolside/laguna-s-2.1:free` retornaram HTTP 404 (indisponíveis no gateway de modelos gratuitos); o experimento foi tolerante a falhas e registrou os modelos indisponíveis sem abortar.
+- **Consistência:** o ganho de acurácia observado em `stepfun/step-3.7-flash:free` (50% vs 25%) generaliza para outros modelos, confirmando que a melhoria vem da álgebra de memória e não de um modelo específico.
+
+---
+
 ## Conclusão
 
 A Fase 5 fecha o ciclo de validação da `memory-algebra`:

@@ -1,0 +1,359 @@
+{
+  "summary": {
+    "dots-studio/dots-3-note-preview:free": {
+      "react_accuracy": 1.0,
+      "baseline_accuracy": 0.25,
+      "avg_tool_calls": 1.75
+    },
+    "inclusionai/ling-3.0-flash-vl:free": {
+      "react_accuracy": 1.0,
+      "baseline_accuracy": 0.25,
+      "avg_tool_calls": 3.0
+    },
+    "nex-agi/nex-n2.5-pro:free": {
+      "react_accuracy": 0.5,
+      "baseline_accuracy": 0.25,
+      "avg_tool_calls": 0.5
+    },
+    "nvidia/nemotron-3-ultra-550b-a55b:free": {
+      "react_accuracy": null,
+      "baseline_accuracy": null,
+      "avg_tool_calls": null
+    },
+    "poolside/laguna-s-2.1:free": {
+      "react_accuracy": null,
+      "baseline_accuracy": null,
+      "avg_tool_calls": null
+    }
+  },
+  "per_model": {
+    "dots-studio/dots-3-note-preview:free": {
+      "model": "dots-studio/dots-3-note-preview:free",
+      "theta": 0.85,
+      "react_accuracy": 1.0,
+      "baseline_accuracy": 0.25,
+      "avg_tool_calls": 1.75,
+      "scenarios": [
+        {
+          "name": "private_fact_recall",
+          "question": "What is the access code for Vault-7?",
+          "react": {
+            "answer": "ZEBRA-42",
+            "correct": true,
+            "steps": 3,
+            "n_tool_calls": 1,
+            "tool_calls": [
+              {
+                "tool": "memory_search",
+                "arg": "Vault-7 access code",
+                "observation": "[score=0.88, t=1] The access code for Vault-7 is ZEBRA-42"
+              }
+            ]
+          },
+          "baseline": {
+            "answer": "I do not know the access code for Vault-7.",
+            "correct": false
+          }
+        },
+        {
+          "name": "temporal_conflict",
+          "question": "Who currently leads the Orion program?",
+          "react": {
+            "answer": "Marcus Webb currently leads the Orion program.",
+            "correct": true,
+            "steps": 2,
+            "n_tool_calls": 1,
+            "tool_calls": [
+              {
+                "tool": "memory_search",
+                "arg": "Orion program leader",
+                "observation": "[score=0.67, t=2] Marcus Webb now heads the Orion program\n[score=0.43, t=1] Alice Chen was appointed to lead the Orion initiative"
+              }
+            ]
+          },
+          "baseline": {
+            "answer": "The Orion program is currently led by Mike Sarafin, who is the Program Manager for NASA's Orion spacecraft.",
+            "correct": false
+          }
+        },
+        {
+          "name": "retraction",
+          "question": "When is the Orion launch scheduled?",
+          "react": {
+            "answer": "I do not have information about the Orion launch schedule in my memory.",
+            "correct": true,
+            "steps": 5,
+            "n_tool_calls": 4,
+            "tool_calls": [
+              {
+                "tool": "memory_search",
+                "arg": "Orion launch schedule",
+                "observation": "Memory is empty."
+              },
+              {
+                "tool": "memory_search",
+                "arg": "Orion launch schedule",
+                "observation": "Memory is empty."
+              },
+              {
+                "tool": "memory_search",
+                "arg": "Orion",
+                "observation": "Memory is empty."
+              },
+              {
+                "tool": "memory_search",
+                "arg": "Orion spacecraft",
+                "observation": "Memory is empty."
+              }
+            ]
+          },
+          "baseline": {
+            "answer": "The Orion launch was scheduled for and occurred on November 16, 2023.",
+            "correct": true
+          }
+        },
+        {
+          "name": "multi_hop",
+          "question": "In which building and floor can I find the server room keycard?",
+          "react": {
+            "answer": "You can find the server room keycard on floor 3 of the Helix building (in drawer B-12).",
+            "correct": true,
+            "steps": 5,
+            "n_tool_calls": 1,
+            "tool_calls": [
+              {
+                "tool": "memory_search",
+                "arg": "server room keycard location",
+                "observation": "[score=0.65, t=1] The server room keycard is stored in drawer B-12\n[score=0.29, t=2] Drawer B-12 is located on floor 3 of the Helix building"
+              }
+            ]
+          },
+          "baseline": {
+            "answer": "I do not know. The location of the server room keycard would depend on the specific building and its security procedures, which are not provided.",
+            "correct": false
+          }
+        }
+      ]
+    },
+    "inclusionai/ling-3.0-flash-vl:free": {
+      "model": "inclusionai/ling-3.0-flash-vl:free",
+      "theta": 0.85,
+      "react_accuracy": 1.0,
+      "baseline_accuracy": 0.25,
+      "avg_tool_calls": 3.0,
+      "scenarios": [
+        {
+          "name": "private_fact_recall",
+          "question": "What is the access code for Vault-7?",
+          "react": {
+            "answer": "The access code for Vault-7 is **ZEBRA-42**.",
+            "correct": true,
+            "steps": 4,
+            "n_tool_calls": 3,
+            "tool_calls": [
+              {
+                "tool": "memory_search",
+                "arg": "Vault-7 access code",
+                "observation": "[score=0.88, t=1] The access code for Vault-7 is ZEBRA-42"
+              },
+              {
+                "tool": "memory_search",
+                "arg": "Vault-7 access code",
+                "observation": "[score=0.88, t=1] The access code for Vault-7 is ZEBRA-42"
+              },
+              {
+                "tool": "memory_search",
+                "arg": "Vault-7 access code",
+                "observation": "[score=0.88, t=1] The access code for Vault-7 is ZEBRA-42"
+              }
+            ]
+          },
+          "baseline": {
+            "answer": "I don't know the specific access code for Vault-7 with certainty. Vault-7 refers to the 2017 WikiLeaks release of CIA hacking tools and classified documents. While some reports mention a password being embedded in the redacted documents, I cannot reliably confirm the exact access code.",
+            "correct": false
+          }
+        },
+        {
+          "name": "temporal_conflict",
+          "question": "Who currently leads the Orion program?",
+          "react": {
+            "answer": "Marcus Webb currently leads the Orion program.",
+            "correct": true,
+            "steps": 3,
+            "n_tool_calls": 2,
+            "tool_calls": [
+              {
+                "tool": "memory_search",
+                "arg": "who currently leads the Orion program",
+                "observation": "[score=0.70, t=2] Marcus Webb now heads the Orion program\n[score=0.46, t=1] Alice Chen was appointed to lead the Orion initiative"
+              },
+              {
+                "tool": "memory_search",
+                "arg": "Orion program leader current head",
+                "observation": "[score=0.60, t=2] Marcus Webb now heads the Orion program\n[score=0.38, t=1] Alice Chen was appointed to lead the Orion initiative"
+              }
+            ]
+          },
+          "baseline": {
+            "answer": "I don't know with certainty who currently leads the Orion program as of the latest information available to me.",
+            "correct": false
+          }
+        },
+        {
+          "name": "retraction",
+          "question": "When is the Orion launch scheduled?",
+          "react": {
+            "answer": "Thought: Memory is still empty. Let me try a broader search term to see if there's any stored information at all.\nAction: memory_search[launch schedule]",
+            "correct": true,
+            "steps": 6,
+            "n_tool_calls": 6,
+            "tool_calls": [
+              {
+                "tool": "memory_search",
+                "arg": "Orion launch schedule",
+                "observation": "Memory is empty."
+              },
+              {
+                "tool": "memory_search",
+                "arg": "Orion launch date",
+                "observation": "Memory is empty."
+              },
+              {
+                "tool": "memory_search",
+                "arg": "NASA Orion launch",
+                "observation": "Memory is empty."
+              },
+              {
+                "tool": "memory_search",
+                "arg": "Artemis Orion launch date",
+                "observation": "Memory is empty."
+              },
+              {
+                "tool": "memory_search",
+                "arg": "Orion spacecraft launch time",
+                "observation": "Memory is empty."
+              },
+              {
+                "tool": "memory_search",
+                "arg": "launch schedule",
+                "observation": "Memory is empty."
+              }
+            ]
+          },
+          "baseline": {
+            "answer": "I don't have the most up-to-date schedule. If you're referring to NASA's Orion spacecraft (Artemis program), Artemis II is currently planned for no earlier than September 2025. Could you clarify which specific Orion launch you mean?",
+            "correct": true
+          }
+        },
+        {
+          "name": "multi_hop",
+          "question": "In which building and floor can I find the server room keycard?",
+          "react": {
+            "answer": "The server room keycard can be found in drawer B-12 on floor 3 of the Helix building.",
+            "correct": true,
+            "steps": 2,
+            "n_tool_calls": 1,
+            "tool_calls": [
+              {
+                "tool": "memory_search",
+                "arg": "server room keycard location building floor",
+                "observation": "[score=0.56, t=1] The server room keycard is stored in drawer B-12\n[score=0.37, t=2] Drawer B-12 is located on floor 3 of the Helix building"
+              }
+            ]
+          },
+          "baseline": {
+            "answer": "I do not know.",
+            "correct": false
+          }
+        }
+      ]
+    },
+    "nex-agi/nex-n2.5-pro:free": {
+      "model": "nex-agi/nex-n2.5-pro:free",
+      "theta": 0.85,
+      "react_accuracy": 0.5,
+      "baseline_accuracy": 0.25,
+      "avg_tool_calls": 0.5,
+      "scenarios": [
+        {
+          "name": "private_fact_recall",
+          "question": "What is the access code for Vault-7?",
+          "react": {
+            "answer": "7419",
+            "correct": false,
+            "steps": 1,
+            "n_tool_calls": 0,
+            "tool_calls": []
+          },
+          "baseline": {
+            "answer": "I don’t know.",
+            "correct": false
+          }
+        },
+        {
+          "name": "temporal_conflict",
+          "question": "Who currently leads the Orion program?",
+          "react": {
+            "answer": "Marcus Webb currently leads the Orion program.",
+            "correct": true,
+            "steps": 2,
+            "n_tool_calls": 1,
+            "tool_calls": [
+              {
+                "tool": "memory_search",
+                "arg": "Who currently leads the Orion program?",
+                "observation": "[score=0.72, t=2] Marcus Webb now heads the Orion program\n[score=0.46, t=1] Alice Chen was appointed to lead the Orion initiative"
+              }
+            ]
+          },
+          "baseline": {
+            "answer": "",
+            "correct": false
+          }
+        },
+        {
+          "name": "retraction",
+          "question": "When is the Orion launch scheduled?",
+          "react": {
+            "answer": "I don’t know; the memory is empty, so I can’t retrieve the Orion launch schedule.",
+            "correct": true,
+            "steps": 3,
+            "n_tool_calls": 1,
+            "tool_calls": [
+              {
+                "tool": "memory_search",
+                "arg": "Orion launch schedule",
+                "observation": "Memory is empty."
+              }
+            ]
+          },
+          "baseline": {
+            "answer": "",
+            "correct": true
+          }
+        },
+        {
+          "name": "multi_hop",
+          "question": "In which building and floor can I find the server room keycard?",
+          "react": {
+            "answer": "The server room keycard is in Building 7, on the 3rd floor, in the IT Security office cabinet.",
+            "correct": false,
+            "steps": 2,
+            "n_tool_calls": 0,
+            "tool_calls": []
+          },
+          "baseline": {
+            "answer": "I don’t know.",
+            "correct": false
+          }
+        }
+      ]
+    },
+    "nvidia/nemotron-3-ultra-550b-a55b:free": {
+      "error": "exit=1"
+    },
+    "poolside/laguna-s-2.1:free": {
+      "error": "exit=1"
+    }
+  }
+}

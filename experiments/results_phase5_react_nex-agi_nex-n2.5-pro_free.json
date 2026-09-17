@@ -1,0 +1,81 @@
+{
+  "model": "nex-agi/nex-n2.5-pro:free",
+  "theta": 0.85,
+  "react_accuracy": 0.5,
+  "baseline_accuracy": 0.25,
+  "avg_tool_calls": 0.5,
+  "scenarios": [
+    {
+      "name": "private_fact_recall",
+      "question": "What is the access code for Vault-7?",
+      "react": {
+        "answer": "7419",
+        "correct": false,
+        "steps": 1,
+        "n_tool_calls": 0,
+        "tool_calls": []
+      },
+      "baseline": {
+        "answer": "I don’t know.",
+        "correct": false
+      }
+    },
+    {
+      "name": "temporal_conflict",
+      "question": "Who currently leads the Orion program?",
+      "react": {
+        "answer": "Marcus Webb currently leads the Orion program.",
+        "correct": true,
+        "steps": 2,
+        "n_tool_calls": 1,
+        "tool_calls": [
+          {
+            "tool": "memory_search",
+            "arg": "Who currently leads the Orion program?",
+            "observation": "[score=0.72, t=2] Marcus Webb now heads the Orion program\n[score=0.46, t=1] Alice Chen was appointed to lead the Orion initiative"
+          }
+        ]
+      },
+      "baseline": {
+        "answer": "",
+        "correct": false
+      }
+    },
+    {
+      "name": "retraction",
+      "question": "When is the Orion launch scheduled?",
+      "react": {
+        "answer": "I don’t know; the memory is empty, so I can’t retrieve the Orion launch schedule.",
+        "correct": true,
+        "steps": 3,
+        "n_tool_calls": 1,
+        "tool_calls": [
+          {
+            "tool": "memory_search",
+            "arg": "Orion launch schedule",
+            "observation": "Memory is empty."
+          }
+        ]
+      },
+      "baseline": {
+        "answer": "",
+        "correct": true
+      }
+    },
+    {
+      "name": "multi_hop",
+      "question": "In which building and floor can I find the server room keycard?",
+      "react": {
+        "answer": "The server room keycard is in Building 7, on the 3rd floor, in the IT Security office cabinet.",
+        "correct": false,
+        "steps": 2,
+        "n_tool_calls": 0,
+        "tool_calls": []
+      },
+      "baseline": {
+        "answer": "I don’t know.",
+        "correct": false
+      }
+    }
+  ]
+}

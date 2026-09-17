@@ -1,0 +1,108 @@
+{
+  "model": "dots-studio/dots-3-note-preview:free",
+  "theta": 0.85,
+  "react_accuracy": 1.0,
+  "baseline_accuracy": 0.25,
+  "avg_tool_calls": 1.75,
+  "scenarios": [
+    {
+      "name": "private_fact_recall",
+      "question": "What is the access code for Vault-7?",
+      "react": {
+        "answer": "ZEBRA-42",
+        "correct": true,
+        "steps": 3,
+        "n_tool_calls": 1,
+        "tool_calls": [
+          {
+            "tool": "memory_search",
+            "arg": "Vault-7 access code",
+            "observation": "[score=0.88, t=1] The access code for Vault-7 is ZEBRA-42"
+          }
+        ]
+      },
+      "baseline": {
+        "answer": "I do not know the access code for Vault-7.",
+        "correct": false
+      }
+    },
+    {
+      "name": "temporal_conflict",
+      "question": "Who currently leads the Orion program?",
+      "react": {
+        "answer": "Marcus Webb currently leads the Orion program.",
+        "correct": true,
+        "steps": 2,
+        "n_tool_calls": 1,
+        "tool_calls": [
+          {
+            "tool": "memory_search",
+            "arg": "Orion program leader",
+            "observation": "[score=0.67, t=2] Marcus Webb now heads the Orion program\n[score=0.43, t=1] Alice Chen was appointed to lead the Orion initiative"
+          }
+        ]
+      },
+      "baseline": {
+        "answer": "The Orion program is currently led by Mike Sarafin, who is the Program Manager for NASA's Orion spacecraft.",
+        "correct": false
+      }
+    },
+    {
+      "name": "retraction",
+      "question": "When is the Orion launch scheduled?",
+      "react": {
+        "answer": "I do not have information about the Orion launch schedule in my memory.",
+        "correct": true,
+        "steps": 5,
+        "n_tool_calls": 4,
+        "tool_calls": [
+          {
+            "tool": "memory_search",
+            "arg": "Orion launch schedule",
+            "observation": "Memory is empty."
+          },
+          {
+            "tool": "memory_search",
+            "arg": "Orion launch schedule",
+            "observation": "Memory is empty."
+          },
+          {
+            "tool": "memory_search",
+            "arg": "Orion",
+            "observation": "Memory is empty."
+          },
+          {
+            "tool": "memory_search",
+            "arg": "Orion spacecraft",
+            "observation": "Memory is empty."
+          }
+        ]
+      },
+      "baseline": {
+        "answer": "The Orion launch was scheduled for and occurred on November 16, 2023.",
+        "correct": true
+      }
+    },
+    {
+      "name": "multi_hop",
+      "question": "In which building and floor can I find the server room keycard?",
+      "react": {
+        "answer": "You can find the server room keycard on floor 3 of the Helix building (in drawer B-12).",
+        "correct": true,
+        "steps": 5,
+        "n_tool_calls": 1,
+        "tool_calls": [
+          {
+            "tool": "memory_search",
+            "arg": "server room keycard location",
+            "observation": "[score=0.65, t=1] The server room keycard is stored in drawer B-12\n[score=0.29, t=2] Drawer B-12 is located on floor 3 of the Helix building"
+          }
+        ]
+      },
+      "baseline": {
+        "answer": "I do not know. The location of the server room keycard would depend on the specific building and its security procedures, which are not provided.",
+        "correct": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "model": "stepfun/step-3.7-flash:free",
+  "theta": 0.85,
+  "react_accuracy": 0.5,
+  "baseline_accuracy": 0.25,
+  "avg_tool_calls": 1.0,
+  "scenarios": [
+    {
+      "name": "private_fact_recall",
+      "question": "What is the access code for Vault-7?",
+      "react": {
+        "answer": "",
+        "correct": false,
+        "steps": 6,
+        "n_tool_calls": 1,
+        "tool_calls": [
+          {
+            "tool": "memory_search",
+            "arg": "Vault-7 access code",
+            "observation": "[score=0.88, t=1] The access code for Vault-7 is ZEBRA-42"
+          }
+        ]
+      },
+      "baseline": {
+        "answer": "",
+        "correct": false
+      }
+    },
+    {
+      "name": "temporal_conflict",
+      "question": "Who currently leads the Orion program?",
+      "react": {
+        "answer": "Marcus Webb currently leads the Orion program.",
+        "correct": true,
+        "steps": 5,
+        "n_tool_calls": 1,
+        "tool_calls": [
+          {
+            "tool": "memory_search",
+            "arg": "Orion program leader",
+            "observation": "[score=0.67, t=2] Marcus Webb now heads the Orion program\n[score=0.43, t=1] Alice Chen was appointed to lead the Orion initiative"
+          }
+        ]
+      },
+      "baseline": {
+        "answer": "",
+        "correct": false
+      }
+    },
+    {
+      "name": "retraction",
+      "question": "When is the Orion launch scheduled?",
+      "react": {
+        "answer": "",
+        "correct": true,
+        "steps": 6,
+        "n_tool_calls": 1,
+        "tool_calls": [
+          {
+            "tool": "memory_search",
+            "arg": "Orion launch scheduled",
+            "observation": "Memory is empty."
+          }
+        ]
+      },
+      "baseline": {
+        "answer": "",
+        "correct": true
+      }
+    },
+    {
+      "name": "multi_hop",
+      "question": "In which building and floor can I find the server room keycard?",
+      "react": {
+        "answer": "",
+        "correct": false,
+        "steps": 6,
+        "n_tool_calls": 1,
+        "tool_calls": [
+          {
+            "tool": "memory_search",
+            "arg": "server room keycard location building floor",
+            "observation": "[score=0.56, t=1] The server room keycard is stored in drawer B-12\n[score=0.37, t=2] Drawer B-12 is located on floor 3 of the Helix building"
+          }
+        ]
+      },
+      "baseline": {
+        "answer": "I do not know. This information is specific to your particular facility; please consult your on-site security or IT administration team for accurate details.",
+        "correct": false
+      }
+    }
+  ]
+}
