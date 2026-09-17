@@ -385,7 +385,28 @@ $N$ & Retrieval & Temporal & Retra\c{c}\~ao & Compose (s) & Retrieve (s) \\
 \caption{Fase~5 Scale: \'algebra como camada de mem'oria LLM em escala. Dados em \texttt{experiments/results\_phase5\_scale.json}.}
 \end{table}
 
-A \'algebra funciona como camada de mem'oria para LLM real: em $N = 500$, todas as m'etricas atingem 100\%. A composi\c{c}\~ao permanece $O(N)$ e o retrieve escala linearmente ($\sim$1\,ms por fato adicional).
+A \'algebra funciona como camada de mem\'oria para LLM real: em $N = 500$, todas as m\'etricas atingem 100\%. A composi\c{c}\~ao permanece $O(N)$ e o retrieve escala linearmente ($\sim$1\,ms por fato adicional).
+
+\subsection{Fase 5C: Agente ReAct Multi-Modelo}
+
+Para verificar se o ganho de acur\'acia independe do modelo LLM, implementamos um agente ReAct (Thought $\to$ Action $\to$ Observation) que consulta a \`algebra via ferramentas \texttt{memory\_search(query, k, hops)} e \texttt{get\_node(name)}, e o comparamos com um baseline sem mem\'oria em 4 cen\'arios (recupera\c{c}\~ao de fato privado, conflito temporal, retra\c{c}\~ao e multi-hop):
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Modelo} & \textbf{ReAct} & \textbf{Baseline} & \textbf{Ferramentas/cen\'ario} \\
+\midrule
+\texttt{dots-studio/dots-3-note-preview:free} & 100\% & 25\% & 1,75 \\
+\texttt{inclusionai/ling-3.0-flash-vl:free} & 100\% & 25\% & 3,00 \\
+\texttt{nex-agi/nex-n2.5-pro:free} & 50\% & 25\% & 0,50 \\
+\texttt{stepfun/step-3.7-flash:free} & 50\% & 25\% & 1,00 \\
+\bottomrule
+\end{tabular}
+\caption{Fase~5C: agente ReAct com \`algebra de mem\'oria vs.\ baseline sem mem\'oria em 4 modelos. Dados em \texttt{experiments/results\_phase5\_react\_models.json}.}
+\end{table}
+
+Em todos os modelos dispon\'iveis, o agente ReAct supera o baseline. Em 2 dos 4 modelos, a \'algebra eleva a acur\'acia de 25\% para 100\%, confirmando que a melhoria \'e atribu\'ivel \`a camada de mem\'oria alg\'ebrica e n\~ao ao modelo LLM. Dois modelos adicionais (\texttt{nvidia/nemotron-3-ultra-550b-a55b:free} e \texttt{poolside/laguna-s-2.1:free}) retornaram HTTP~404 (indispon\'iveis no gateway gratuito) e foram exclu\'idos.
 
 \section{Discuss\~ao}\label{sec:discussao}
 

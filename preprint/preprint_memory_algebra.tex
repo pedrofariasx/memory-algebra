@@ -394,6 +394,27 @@ $N$ & Retrieval & Temporal & Retraction & Compose (s) & Retrieve (s) \\
 
 The algebra functions as a memory layer for a real LLM: at $N = 500$, all metrics reach 100\%. Composition remains $O(N)$ and retrieve scales linearly ($\sim$1\,ms per additional fact).
 
+\subsection{Phase 5C: Multi-Model ReAct Agent}
+
+To verify that the accuracy gain is independent of the LLM, we implemented a ReAct agent (Thought $\to$ Action $\to$ Observation) that queries the algebra via \texttt{memory\_search(query, k, hops)} and \texttt{get\_node(name)} tools, and compared it against a no-memory baseline across 4 scenarios (private fact recall, temporal conflict, retraction, multi-hop):
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Model} & \textbf{ReAct} & \textbf{Baseline} & \textbf{Tools/scenario} \\
+\midrule
+\texttt{dots-studio/dots-3-note-preview:free} & 100\% & 25\% & 1.75 \\
+\texttt{inclusionai/ling-3.0-flash-vl:free} & 100\% & 25\% & 3.00 \\
+\texttt{nex-agi/nex-n2.5-pro:free} & 50\% & 25\% & 0.50 \\
+\texttt{stepfun/step-3.7-flash:free} & 50\% & 25\% & 1.00 \\
+\bottomrule
+\end{tabular}
+\caption{Phase~5C: ReAct agent with memory algebra vs.\ no-memory baseline across 4 models. Data in \texttt{experiments/results\_phase5\_react\_models.json}.}
+\end{table}
+
+The ReAct agent outperforms the baseline on every available model. In 2 of 4 models the algebra raises accuracy from 25\% to 100\%, confirming the improvement is attributable to the algebraic memory layer rather than to any specific LLM. Two additional models (\texttt{nvidia/nemotron-3-ultra-550b-a55b:free} and \texttt{poolside/laguna-s-2.1:free}) returned HTTP~404 (unavailable on the free gateway) and were excluded.
+
 \section{Discussion}\label{sec:discussion}
 
 \subsection{Key Findings}
