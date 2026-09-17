@@ -348,27 +348,27 @@ Multi-hop com arestas relacionais & opera corretamente em hops $= 2$ & APROVADO 
 
 A associatividade \'e estrutural: preserva-se fora do regime ortogonal sint\'eticos. A recupera\c{c}\~ao por par\'afrase atinge 100\% top-1, demonstrando que a fus\~ao por similaridade opera corretamente sobre a distribui\c{c}\~ao real de embeddings, onde conceitos semanticamente pr\'oximos apresentam alta correla\c{c}\~ao.
 
-A Fase~4 tamb'em foi executada em escala: com $N = 10{,}000$ mem'orias reais ($\theta = 0{,}85$), a composi\c{c}\~ao completa leva 0,007\,s e a recupera\c{c}\~ao leva $\sim$20\,s, retornando 9.990 n'os. O tempo de recupera\c{c}\~ao reflete a alta densidade de pares similares intra-t'opico t'ipica de embeddings reais; a composi\c{c}\~ao permanece $O(N)$ e pr'atica mesmo em escala.
+A Fase~4 tamb\'em foi executada em escala: com $N = 10{,}000$ mem\'orias reais ($\theta = 0{,}85$), a composi\c{c}\~ao completa leva 0,007\,s e a recupera\c{c}\~ao leva $\sim$20\,s, retornando 9.990 n\'os. O tempo de recupera\c{c}\~ao reflete a alta densidade de pares similares intra-t\'opico t\'ipica de embeddings reais; a composi\c{c}\~ao permanece $O(N)$ e pr\'atica mesmo em escala.
 
 \subsection{Fase 5: Integra\c{c}\~ao com LLM}
 
-A Fase~5 valida a \'algebra como camada de mem'oria para um agente LLM real (\texttt{stepfun/step-3.7-flash:free} via Kilo Gateway, sem API key). O agente consulta \texttt{retrieve()} como ferramenta e \texttt{compose()} para armazenar fatos.
+A Fase~5 valida a \'algebra como camada de mem\'oria para um agente LLM real (\texttt{stepfun/step-3.7-flash:free} via Kilo Gateway, sem API key). O agente consulta \texttt{retrieve()} como ferramenta e \texttt{compose()} para armazenar fatos.
 
 \begin{table}[h]
 \centering
 \begin{tabular}{llll}
 \toprule
-\textbf{Cen'ario} & \textbf{'Algebra} & \textbf{LLM (com mem'oria)} & \textbf{Status} \\
+\textbf{Cen\'ario} & \textbf{\'Algebra} & \textbf{LLM (com mem\'oria)} & \textbf{Status} \\
 \midrule
 Conflito temporal & fato correto recuperado & ``engineer'' & PASS \\
-Retra\c{c}\~ao & fato retra'ido ausente & ``Paris'' & PASS \\
-Multi-hop & 3 n'os recuperados & --- & PASS \\
+Retra\c{c}\~ao & fato retra\'ido ausente & ``Paris'' & PASS \\
+Multi-hop & 3 n\'os recuperados & --- & PASS \\
 \bottomrule
 \end{tabular}
 \caption{Integra\c{c}\~ao LLM (Fase~5). Dados em \texttt{experiments/results\_phase5.json}.}
 \end{table}
 
-Em escala (Fase~5 Scale), a \'algebra foi testada como camada de mem'oria com $N = 50$ a $500$ fatos reais:
+Em escala (Fase~5 Scale), a \'algebra foi testada como camada de mem\'oria com $N = 50$ a $500$ fatos reais:
 
 \begin{table}[h]
 \centering
@@ -382,7 +382,7 @@ $N$ & Retrieval & Temporal & Retra\c{c}\~ao & Compose (s) & Retrieve (s) \\
 500 & 100\% & 100\% & 100\% & 0,01 & 0,46 \\
 \bottomrule
 \end{tabular}
-\caption{Fase~5 Scale: \'algebra como camada de mem'oria LLM em escala. Dados em \texttt{experiments/results\_phase5\_scale.json}.}
+\caption{Fase~5 Scale: \'algebra como camada de mem\'oria LLM em escala. Dados em \texttt{experiments/results\_phase5\_scale.json}.}
 \end{table}
 
 A \'algebra funciona como camada de mem\'oria para LLM real: em $N = 500$, todas as m\'etricas atingem 100\%. A composi\c{c}\~ao permanece $O(N)$ e o retrieve escala linearmente ($\sim$1\,ms por fato adicional).
