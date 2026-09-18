@@ -1,0 +1,64 @@
+{
+  "temporal_conflict": {
+    "rho_0.0": {
+      "rho": 0.0,
+      "n_seeds": 30,
+      "algebra": "60/60",
+      "temporal_vector_store": "60/60",
+      "simple_kg": "30/60",
+      "algebra_pct": 1.0,
+      "tvs_pct": 1.0,
+      "kg_pct": 0.5
+    },
+    "rho_0.8": {
+      "rho": 0.8,
+      "n_seeds": 30,
+      "algebra": "60/60",
+      "temporal_vector_store": "60/60",
+      "simple_kg": "30/60",
+      "algebra_pct": 1.0,
+      "tvs_pct": 1.0,
+      "kg_pct": 0.5
+    }
+  },
+  "retraction": {
+    "rho_0.0": {
+      "rho": 0.0,
+      "n_seeds": 30,
+      "algebra": "30/30",
+      "temporal_vector_store": "30/30",
+      "simple_kg": "30/30",
+      "algebra_pct": 1.0,
+      "tvs_pct": 1.0,
+      "kg_pct": 1.0
+    },
+    "rho_0.8": {
+      "rho": 0.8,
+      "n_seeds": 30,
+      "algebra": "30/30",
+      "temporal_vector_store": "30/30",
+      "simple_kg": "30/30",
+      "algebra_pct": 1.0,
+      "tvs_pct": 1.0,
+      "kg_pct": 1.0
+    }
+  },
+  "multi_hop": {
+    "rho_0.0": {
+      "rho": 0.0,
+      "n_seeds": 30,
+      "algebra": "30/30",
+      "simple_kg": "30/30",
+      "algebra_pct": 1.0,
+      "kg_pct": 1.0
+    },
+    "rho_0.8": {
+      "rho": 0.8,
+      "n_seeds": 30,
+      "algebra": "30/30",
+      "simple_kg": "30/30",
+      "algebra_pct": 1.0,
+      "kg_pct": 1.0
+    }
+  }
+}

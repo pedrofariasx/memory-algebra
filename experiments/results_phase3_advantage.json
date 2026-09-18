@@ -1,0 +1,66 @@
+{
+  "hybrid_bridge": {
+    "rho_0.0": {
+      "rho": 0.0,
+      "n_seeds": 30,
+      "algebra": "30/30",
+      "simple_kg": "17/30",
+      "temporal_vector_store": "7/30",
+      "algebra_pct": 1.0,
+      "kg_pct": 0.5667,
+      "tvs_pct": 0.2333,
+      "algebra_wins": true
+    },
+    "rho_0.8": {
+      "rho": 0.8,
+      "n_seeds": 30,
+      "algebra": "30/30",
+      "simple_kg": "19/30",
+      "temporal_vector_store": "13/30",
+      "algebra_pct": 1.0,
+      "kg_pct": 0.6333,
+      "tvs_pct": 0.4333,
+      "algebra_wins": true
+    }
+  },
+  "implicit_clustering": {
+    "rho_0.0": {
+      "rho": 0.0,
+      "n_seeds": 30,
+      "algebra": "30/30",
+      "simple_kg": "30/30",
+      "algebra_pct": 1.0,
+      "kg_pct": 1.0,
+      "algebra_wins": false
+    },
+    "rho_0.8": {
+      "rho": 0.8,
+      "n_seeds": 30,
+      "algebra": "30/30",
+      "simple_kg": "30/30",
+      "algebra_pct": 1.0,
+      "kg_pct": 1.0,
+      "algebra_wins": false
+    }
+  },
+  "multi_source_composition": {
+    "rho_0.0": {
+      "rho": 0.0,
+      "n_seeds": 30,
+      "algebra": "30/30",
+      "simple_kg": "7/30",
+      "algebra_pct": 1.0,
+      "kg_pct": 0.2333,
+      "algebra_wins": true
+    },
+    "rho_0.8": {
+      "rho": 0.8,
+      "n_seeds": 30,
+      "algebra": "30/30",
+      "simple_kg": "11/30",
+      "algebra_pct": 1.0,
+      "kg_pct": 0.3667,
+      "algebra_wins": true
+    }
+  }
+}

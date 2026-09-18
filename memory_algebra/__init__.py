@@ -16,6 +16,11 @@ from memory_algebra.core import (
 from memory_algebra.builder import make_memory, orthogonal_concepts, perturb
 from memory_algebra.lens import lens_get, lens_put
 from memory_algebra.baselines import LSTMCell, train_lstm_recall
+from memory_algebra.baselines_production import (
+    BM25TemporalBaseline,
+    ProductionVectorDB,
+    SQLiteTripleStore,
+)
 from memory_algebra.metric import context_weights, semantic_distance
 from memory_algebra.stability import prune
 
@@ -42,4 +47,7 @@ __all__ = [
     "context_weights",
     "semantic_distance",
     "prune",
+    "ProductionVectorDB",
+    "SQLiteTripleStore",
+    "BM25TemporalBaseline",
 ]

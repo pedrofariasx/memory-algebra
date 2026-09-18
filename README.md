@@ -6,8 +6,8 @@
 [![Tests](https://github.com/pedrofariasx/memory-algebra/actions/workflows/tests.yml/badge.svg)](https://github.com/pedrofariasx/memory-algebra/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-30%20passed-brightgreen)](tests/)
-[![Preprint](https://img.shields.io/badge/preprint-CC--BY--4.0-orange)](https://zenodo.org/records/22782385)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22782385.svg)](https://doi.org/10.5281/zenodo.22782385)
+[![Preprint](https://img.shields.io/badge/preprint-CC--BY--4.0-orange)](https://zenodo.org/records/22815162)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22815162.svg)](https://doi.org/10.5281/zenodo.22815162)
 
 Uma **álgebra de memórias** para sistemas de IA que resolve o problema de **interferência catastrófica** (catastrophic forgetting): composições sucessivas de memórias sem destruição das representações anteriores. Implementação em Python com provas formais de associatividade exata, validação empírica contra baselines (LSTM, soma vetorial, kNN), e preprint disponível em PT-BR e EN.
 
@@ -189,4 +189,4 @@ A álgebra $(V, G, T, P)$ resolve o trade-off central: **composição associativ
 
 ## Como Citar
 
-Farias, P. F. R. (2026). *An Algebra of Memory: Formal Foundations and Empirical Validation of Associative Composition Without Catastrophic Interference*. Zenodo. [https://doi.org/10.5281/zenodo.22782385](https://doi.org/10.5281/zenodo.22782385)
+Farias, P. F. R. (2026). *An Algebra of Memory: Formal Foundations and Empirical Validation of Associative Composition Without Catastrophic Interference*. Zenodo. [https://doi.org/10.5281/zenodo.22815162](https://doi.org/10.5281/zenodo.22815162)
